@@ -50,8 +50,8 @@
 	
 	
 	GeoPattern = __webpack_require__(3),
-	// pattern = GeoPattern.generate(Date().toLocaleString()),
-	pattern = GeoPattern.generate(''),
+	pattern = GeoPattern.generate(Date().toLocaleString()),
+	// pattern = GeoPattern.generate(''),
 	
 	// Phaser
 	game = new Phaser.Game(1024, 576, Phaser.CANVAS, "game-container"),
@@ -83,11 +83,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	// states/main.js
-	var
-	GeoPattern = __webpack_require__(3),
-	pattern = GeoPattern.generate(Date().toLocaleString());
 	
-	console.log(pattern);
+	
 	
 	var main = function(game) {
 	};

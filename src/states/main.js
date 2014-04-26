@@ -1,9 +1,6 @@
 // states/main.js
-var
-GeoPattern = require('geopattern'),
-pattern = GeoPattern.generate(Date().toLocaleString());
 
-console.log(pattern);
+
 
 var main = function(game) {
 };
