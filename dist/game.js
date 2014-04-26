@@ -100,6 +100,20 @@
 	    // Set stage background to something sky colored
 	    // this.game.stage.backgroundColor = 0x4488cc;
 	
+	    // Create some ground for the player to walk on
+	    this.ground = this.game.add.group();
+	    for(var x = 0; x < this.game.width; x += 32) {
+	        // Add the ground blocks, enable physics on each, make them immovable
+	        var groundBlock = this.game.add.sprite(x, this.game.height - 32, 'ground');
+	        this.game.physics.enable(groundBlock, Phaser.Physics.ARCADE);
+	        groundBlock.body.immovable = true;
+	        groundBlock.body.allowGravity = false;
+	        groundBlock.body.setSize(32, 20, 0, 12)
+	        this.ground.add(groundBlock);
+	    }
+	
+	
+	
 	    // Define movement constants
 	    this.MAX_SPEED = 250; // pixels/second
 	    this.ACCELERATION = 600; // pixels/second/second
@@ -128,16 +142,7 @@
 	    // Since we're jumping we need gravity
 	    this.game.physics.arcade.gravity.y = this.GRAVITY;
 	
-	    // Create some ground for the player to walk on
-	    this.ground = this.game.add.group();
-	    for(var x = 0; x < this.game.width; x += 32) {
-	        // Add the ground blocks, enable physics on each, make them immovable
-	        var groundBlock = this.game.add.sprite(x, this.game.height - 32, 'ground');
-	        this.game.physics.enable(groundBlock, Phaser.Physics.ARCADE);
-	        groundBlock.body.immovable = true;
-	        groundBlock.body.allowGravity = false;
-	        this.ground.add(groundBlock);
-	    }
+	
 	
 	    // Capture certain keys to prevent their default actions in the browser.
 	    // This is only necessary because this is an HTML5 game. Games on other
