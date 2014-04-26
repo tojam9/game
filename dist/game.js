@@ -204,7 +204,12 @@
 	            return;
 	
 	        this.player.collided = true;
-	        console.log('collided');
+	
+	        this.player.one.alpha = 0;
+	        this.player.two.alpha = 0;
+	
+	        this.ground.alpha = 0;
+	
 	    }
 	
 	    // Since we're jumping we need gravity
