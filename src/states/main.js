@@ -112,6 +112,17 @@ main.prototype.create = function() {
     this.player.one.body.drag.setTo(this.DRAG, 0); // x, y
     this.player.two.body.drag.setTo(this.DRAG, 0); // x, y
 
+    this.player.collided = false;
+
+    this.player.collide = function() {
+
+        if(this.player.collided)
+            return;
+
+        this.player.collided = true;
+        console.log('collided');
+    }
+
     // Since we're jumping we need gravity
     this.game.physics.arcade.gravity.y = this.GRAVITY;
 
@@ -137,6 +148,8 @@ main.prototype.create = function() {
 
     this.joust = false;
     var beginJoust = function() {
+        this.player.one.body.acceleration.x = 0;
+        this.player.two.body.acceleration.x = 0;
         this.joust = true;
     };
 
@@ -158,12 +171,16 @@ main.prototype.update = function() {
     this.game.physics.arcade.collide(this.player.two, this.ground);
 
     // Collision between players
-    this.game.physics.arcade.collide(this.player.two, this.player.one);
+    this.game.physics.arcade.collide(this.player.two, this.player.one, this.player.collide, null, this);
 
     if(this.joust) {
         this.player.one.body.acceleration.x = -this.ACCELERATION;
         this.player.two.body.acceleration.x = this.ACCELERATION;
     }
+
+
+
+
 
     // if (this.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
     //     // If the LEFT key is down, set the player velocity to move left
