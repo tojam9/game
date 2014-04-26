@@ -1,0 +1,28 @@
+body,
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Sans-Serif;
+}
+.Center-Container.is-Inline {
+  text-align: center;
+  overflow: auto;
+  height: 100%;
+}
+.Center-Container.is-Inline:after,
+.is-Inline .Center-Block {
+  display: inline-block;
+  vertical-align: middle;
+}
+.Center-Container.is-Inline:after {
+  content: '';
+  height: 100%;
+  margin-left: -0.25em;
+/* To offset spacing. May vary by font */
+}
+.is-Inline .Center-Block {
+  max-width: 99%;
+/* Prevents issues with long content causes the content block to be pushed to the top */
+/* max-width: calc(100% - 0.25em) /* Only for IE9+ */
+}

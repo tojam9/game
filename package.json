@@ -1,0 +1,45 @@
+{
+  "name": "MyAwesomeProject",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Description about my awesome project.",
+  "main": "./dist/game.js",
+  "scripts": {
+    "test": "istanbul test --report html -x 'vendor/**' _mocha",
+    "test-travis": "istanbul cover -x 'vendor/**' _mocha -- -R spec;A=$?;cat coverage/lcov.info | coveralls;exit $A"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amazing/project.git"
+  },
+  "author": "Amazing author",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/amazing/project/issues"
+  },
+  "homepage": "https://github.com/amazing/project",
+  "devDependencies": {
+    "mocha": "*",
+    "chai": "*",
+    "istanbul": "*",
+    "gulp": "~3",
+    "gulp-util": "~2",
+    "coveralls": "~2",
+    "gulp-uglify": "~0",
+    "webpack": "~1",
+    "gulp-watch": "~0",
+    "gulp-plumber": "~0",
+    "through2": "~0",
+    "gulp-rename": "~1",
+    "gulp-mocha": "~0",
+    "webpack-dev-server": "^1.2.7",
+    "geopattern": "^1.2.1"
+  },
+  "engines": {
+    "node": ">=0.9",
+    "npm": ">=1.2.10"
+  },
+  "dependencies": {
+    "geopattern": "^1.2.1"
+  }
+}
