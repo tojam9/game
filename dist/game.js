@@ -93,6 +93,9 @@
 	// Load images and sounds
 	main.prototype.preload = function() {
 	
+	    this.layer = {};
+	    this.layer.popover = {};
+	
 	    this.player = {};
 	    this.player.height = 92;
 	    this.player.width = 636/6;
@@ -116,6 +119,8 @@
 	    this.game.load.image('ground', './assets/gfx/ground.png');
 	    this.game.load.spritesheet('players', './assets/gfx/avatar.png', this.player.width, this.player.height);
 	
+	    this.game.load.image('popover.bg', './assets/gfx/popover/DungeonWall.png');
+	
 	    // this.data = {};
 	    // this.data.player = {};
 	    // this.data.player.height = 105;
@@ -135,6 +140,11 @@
 	
 	    // Set stage background to something sky colored
 	    // this.game.stage.backgroundColor = 0x4488cc;
+	
+	    // popover stuffs
+	    this.layer.popover = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'popover.bg');
+	    this.layer.popover.alpha = 0;
+	
 	
 	    // Create some ground for the player to walk on
 	    this.ground = this.game.add.group();
@@ -163,9 +173,10 @@
 	
 	
 	    // Create players
+	    this.layer.main = this.game.add.group();
 	    var player_pos_y = this.game.height - this.player.height - ground_bound_offset;
-	    this.player.one = this.game.add.sprite(this.game.width - this.player.width, player_pos_y, 'players', 0);
-	    this.player.two = this.game.add.sprite(0, player_pos_y, 'players', 7);
+	    this.player.one = this.game.add.sprite(this.game.width - this.player.width, player_pos_y, 'players', 0, this.layer.main);
+	    this.player.two = this.game.add.sprite(0, player_pos_y, 'players', 7, this.layer.main);
 	
 	
 	    // this.player_one.scale.setTo(0.7, 0.7);
@@ -205,10 +216,13 @@
 	
 	        this.player.collided = true;
 	
-	        this.player.one.alpha = 0;
-	        this.player.two.alpha = 0;
+	        this.layer.main.alpha = 0;
+	
+	        // this.player.one.alpha = 0;
+	        // this.player.two.alpha = 0;
 	
 	        this.ground.alpha = 0;
+	        this.layer.popover.alpha = 1;
 	
 	    }
 	
