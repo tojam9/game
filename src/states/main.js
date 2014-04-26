@@ -8,7 +8,7 @@ var main = function(game) {
 // Load images and sounds
 main.prototype.preload = function() {
     this.game.load.image('ground', './assets/gfx/ground.png');
-    this.game.load.image('player', './assets/gfx/player.png');
+    this.game.load.spritesheet('player', './assets/gfx/avatar.png', 92, 90);
 };
 
 // Setup the example
@@ -24,7 +24,10 @@ main.prototype.create = function() {
     this.JUMP_SPEED = -300; // pixels/second (negative y is up)
 
     // Create a player sprite
-    this.player = this.game.add.sprite(this.game.width/2, this.game.height - 64, 'player');
+    this.player = this.game.add.sprite(this.game.width/2, this.game.height - 150, 'player');
+
+    this.player.scale.setTo(0.7, 0.7);
+
 
     // Enable physics on the player
     this.game.physics.enable(this.player, Phaser.Physics.ARCADE);
