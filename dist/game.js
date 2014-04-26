@@ -217,9 +217,19 @@
 	    this.fpsText = this.game.add.text(
 	        20, 20, '', { font: '16px Arial', fill: '#ffffff' }
 	    );
+	
+	
+	    this.joust = false;
+	    var beginJoust = function() {
+	        this.joust = true;
+	    };
+	
+	    // timer to
+	    this.game.time.events.add(Phaser.Timer.SECOND , beginJoust, this);
 	};
 	
 	// The update() method is called every frame
+	
 	main.prototype.update = function() {
 	
 	
@@ -230,11 +240,14 @@
 	    // Collide the player with the ground
 	    this.game.physics.arcade.collide(this.player.one, this.ground);
 	    this.game.physics.arcade.collide(this.player.two, this.ground);
+	
+	    // Collision between players
 	    this.game.physics.arcade.collide(this.player.two, this.player.one);
 	
-	
-	    this.player.one.body.acceleration.x = -this.ACCELERATION;
-	    this.player.two.body.acceleration.x = this.ACCELERATION;
+	    if(this.joust) {
+	        this.player.one.body.acceleration.x = -this.ACCELERATION;
+	        this.player.two.body.acceleration.x = this.ACCELERATION;
+	    }
 	
 	    // if (this.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
 	    //     // If the LEFT key is down, set the player velocity to move left
