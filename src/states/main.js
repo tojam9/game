@@ -3,7 +3,7 @@
 // states/main.js
 
 // var events = require('events');
-
+var _ = require('lodash');
 
 var main = function() {};
 
@@ -167,21 +167,34 @@ main.prototype.create = function() {
 
     swords.overheadstrike = this.game.add.sprite(offset_x, offset_y, 'popover.button.sword.overheadstrike', null, this.layers.popover.group);
     this.layers.popover.group.add(swords.overheadstrike);
-
     swords.overheadstrike.inputEnabled = true;
 
-	var listener = function() {
-	console.log('lol');
-	};
+    swords.overheadstrike.events.onInputDown.add(function() {
+        this.rps.player.input = 'R';
+        this.rps.player.type = 'sword';
+    }, this);
 
-    swords.overheadstrike.events.onInputDown.add(listener, this);
+
     offset_y += this.game.cache.getImage('popover.button.sword.overheadstrike').height;
     swords.thrust = this.game.add.sprite(offset_x, offset_y, 'popover.button.sword.thrust',null,this.layers.popover.group);
     this.layers.popover.group.add(swords.thrust);
+    swords.thrust.inputEnabled = true;
+
+    swords.thrust.events.onInputDown.add(function() {
+        this.rps.player.input = 'P';
+        this.rps.player.type = 'sword';
+    }, this);
 
     offset_y += this.game.cache.getImage('popover.button.sword.thrust').height;
     swords.lowblow = this.game.add.sprite(offset_x, offset_y, 'popover.button.sword.lowblow',null,this.layers.popover.group);
     this.layers.popover.group.add(swords.lowblow);
+    swords.lowblow.inputEnabled = true;
+
+    swords.lowblow.events.onInputDown.add(function() {
+        this.rps.player.input = 'S';
+        this.rps.player.type = 'sword';
+    }, this);
+
 
     this.layers.popover.button.swords = swords;
 
@@ -192,18 +205,39 @@ main.prototype.create = function() {
 
     shields.raised = this.game.add.sprite(offset_x, offset_y, 'popover.button.shield', null, this.layers.popover.group);
     this.layers.popover.group.add(shields.raised);
+    shields.raised.inputEnabled = true;
+
+    shields.raised.events.onInputDown.add(function() {
+        this.rps.player.input = 'R';
+        this.rps.player.type = 'shield';
+    }, this);
 
     offset_y += this.game.cache.getImage('popover.button.shield').height;
     shields.deflect = this.game.add.sprite(offset_x, offset_y, 'popover.button.shield', null, this.layers.popover.group);
     this.layers.popover.group.add(shields.deflect);
+    shields.deflect.inputEnabled = true;
+
+    shields.deflect.events.onInputDown.add(function() {
+        this.rps.player.input = 'P';
+        this.rps.player.type = 'shield';
+    }, this);
 
     offset_y += this.game.cache.getImage('popover.button.shield').height;
     shields.lowblock = this.game.add.sprite(offset_x, offset_y, 'popover.button.shield', null, this.layers.popover.group);
     this.layers.popover.group.add(shields.lowblock);
+    shields.lowblock.inputEnabled = true;
+
+    shields.lowblock.events.onInputDown.add(function() {
+        this.rps.player.input = 'S';
+        this.rps.player.type = 'shield';
+        console.log('fuck');
+    }, this);
+
+    this.layers.popover.button.shields = shields;
 
 
 
-    // RPF result animations
+    // RPS result animations
     this.layers.popover.results = {};
 
 
@@ -307,7 +341,6 @@ main.prototype.create = function() {
 
 
     /// events ///
-    var E = 0;
     this.events = {
 
         timer: {
@@ -337,8 +370,6 @@ main.prototype.create = function() {
         this.events.players.collided = true;
 
         console.log('collided');
-
-        // calculate score
 
         // reset game
         this.events.players.collided = false;
@@ -372,6 +403,18 @@ main.prototype.create = function() {
         20, 50, '', { font: '16px Arial', fill: '#ffffff' }
     );
 
+    // rps object
+    this.rps = {};
+    this.rps.ai = {
+        input: 'R',
+        type: 'sword'
+    };
+
+    this.rps.player = {
+        input: null,
+        type: null
+    };
+
 };
 
 // The update() method is called every frame
@@ -396,6 +439,18 @@ main.prototype.update = function() {
         console.log('begin timer');
         this.events.timer.begin = false;
 
+        // disable buttons
+        _.each(this.layers.popover.button.shields, function(val) {
+            val.input.enabled = false;
+            val.alpha = 0;
+        });
+        _.each(this.layers.popover.button.swords, function(val) {
+            val.input.enabled = false;
+            val.alpha = 0;
+        });
+
+
+
         // reset data
         this.timer.duration = 3;
 
@@ -407,7 +462,18 @@ main.prototype.update = function() {
                 this.events.timer.end = true;
                 this.events.players.joust = true;
 
-                console.log('timer end')
+                // reenable buttons
+                _.each(this.layers.popover.button.shields, function(val) {
+                    val.input.enabled = true;
+                    val.alpha = 1;
+                });
+                _.each(this.layers.popover.button.swords, function(val) {
+                    val.input.enabled = true;
+                    val.alpha = 1;
+                });
+
+                console.log('timer end');
+
             } else {
                 this.timer.text.text = this.timer.duration;
             }
