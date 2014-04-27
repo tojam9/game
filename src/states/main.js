@@ -4,6 +4,7 @@
 
 // var events = require('events');
 var _ = require('lodash');
+var sha256 = require('../sha256.js');
 
 var main = function() {};
 
@@ -415,7 +416,7 @@ main.prototype.create = function() {
         this.events.players.joust = false;
         this.events.players.collided = true;
 
-        console.log('collided');
+        // console.log('collided');
 
         // reset game
         this.events.players.collided = false;
@@ -463,12 +464,14 @@ main.prototype.create = function() {
     this.rps = {};
     this.rps.ai = {
         input: 'R',
-        type: 'sword'
+        type: 'sword',
+        state: 'e+4sk5jfPPON3muIQJPM-KBCJPyYHgkkgXgpprL2'
     };
 
     this.rps.player = {
         input: null,
-        type: null
+        type: null,
+        last_move: ''
     };
 
 };
@@ -492,7 +495,7 @@ main.prototype.update = function() {
 
     // setup timer
     if(this.events.timer.begin) {
-        console.log('begin timer');
+        // console.log('begin timer');
         this.events.timer.begin = false;
 
         // disable buttons
@@ -511,7 +514,7 @@ main.prototype.update = function() {
         this.timer.duration = 0;
 
         var updateTimer = function() {
-            console.log('update timer', this.timer.duration);
+            // console.log('update timer', this.timer.duration);
 
             if(this.timer.duration === 0) {
                 this.timer.text.text = '';
@@ -528,7 +531,13 @@ main.prototype.update = function() {
                     val.alpha = 0.5;
                 });
 
-                console.log('timer end');
+                // ai choose move
+                this.rps.ai.state = this.rps.player.last_move && this.rps.ai.state + this.rps.player.last_move ||  'e+4sk5jfPPON3muIQJPM-KBCJPyYHgkkgXgpprL2';
+
+                this.rps.ai.input = 'RPS'[parseInt(sha256.hash(this.rps.ai.state),16)%3]
+                this.rps.ai.type = ['sword', 'shield'][Math.floor(Math.random() * (1 + 1))];
+
+                // console.log('timer end');
 
             } else {
                 this.timer.text.text = this.timer.duration;
@@ -578,6 +587,9 @@ main.prototype.update = function() {
             this.status.text.text = 'CHOOSE SOMETHING!';
 
         } else {
+
+            // record player's last move
+            this.rps.player.last_move = this.rps.player.input;
 
             // null case
             if (this.rps.player.input === this.rps.ai.input) {
@@ -759,9 +771,9 @@ main.prototype.update = function() {
             anim_sprite.alpha = 1;
         }
 
-        console.log('show results');
+        // console.log('show results');
 
-        console.log(this.rps.player.input, this.rps.player.type);
+        // console.log(this.rps.player.input, this.rps.player.type);
         console.log(this.rps.ai.input, this.rps.ai.type);
 
         // align text
@@ -780,7 +792,7 @@ main.prototype.update = function() {
             }
 
             this.events.results.end = true;
-            console.log('finish showing results');
+            // console.log('finish showing results');
 
             this.status.text.text = '';
         };
@@ -792,7 +804,7 @@ main.prototype.update = function() {
 
     if(this.events.results.end) {
 
-        console.log('results end');
+        // console.log('results end');
         this.events.results.end = false;
         this.events.timer.begin = true;
 
