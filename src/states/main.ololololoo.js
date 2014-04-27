@@ -17,8 +17,8 @@ main.prototype.preload = function() {
     this.player.width = 636/6;
     this.player.data = {};
 	
-	this.score = 0;
-	this.scoreText;
+	var score = 0;
+	var scoreText;
 
     var one = {};
     one.pos = {};
@@ -35,10 +35,11 @@ main.prototype.preload = function() {
     this.player.data.two = two;
 
 
+    this.game.load.image('ground', './assets/gfx/ground.png');
     this.game.load.spritesheet('players', './assets/gfx/avatar.png', this.player.width, this.player.height);
 
     // popover stuff
-    //this.game.load.image('popover.bg', './assets/gfx/popover/DungeonWall.png');
+    this.game.load.image('popover.bg', './assets/gfx/popover/DungeonWall.png');
     // popover buttons
     this.game.load.image('popover.button.sword.lowblow', './assets/gfx/popover/buttons/Low_Blow.png');
     this.game.load.image('popover.button.sword.overheadstrike', './assets/gfx/popover/buttons/Overhead_Strike.png');
@@ -54,13 +55,9 @@ main.prototype.preload = function() {
 
     // animation results
     this.game.load.spritesheet('results.blood_spatter', './assets/gfx/results/Blood_Splatter.png', 426/6, 91);
-	this.game.load.spritesheet('results.Sword_Slash', './assets/gfx/results/Sword_Slash.png', 523/4, 125);
-	this.game.load.spritesheet('results.Block_Animation', './assets/gfx/results/Block_Animation.png', 328/3, 91);
-	this.game.load.spritesheet('results.Sword_Clash', './assets/gfx/results/Sword_Clash.png', 278/3, 80);
-
 
     // Define movement constants
-    this.MAX_SPEED = 125; // pixels/second
+    this.MAX_SPEED = 350; // pixels/second
     this.ACCELERATION = 600; // pixels/second/second
     this.DRAG = 400; // pixels/second
     this.GRAVITY = 980; // pixels/second/second
@@ -74,23 +71,57 @@ main.prototype.create = function() {
     // Set stage background to something sky colored
     // this.game.stage.backgroundColor = 0x4488cc;
 
-
     // space bg
     this.layer.space = {};
 
     this.layer.space.bigplanet = this.game.add.sprite(10, 50, 'space.bigplanet');
     // this.layer.space.rockfield = this.game.add.sprite(0, 100, 'space.rockfield');
 
+
+
     // this.layer.space.castleback.scale.setTo(1, 1);
 
-	//  The score
-    this.scoreText = this.game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
-	
-	//  Add and update the score
-    //this.score += 10;
-    this.scoreText.text = 'Score: ' + this.score;
 
-    
+
+    // popover stuffs
+
+    this.layer.popover = {};
+    this.layer.popover.group = this.game.add.group();
+    this.layer.popover.bg = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'popover.bg', null,this.layer.popover.group);
+
+    this.layer.popover.button = {};
+
+    // popover sword buttons
+    var swords = {};
+    var offset_y = 50;
+    var offset_x = 50;
+
+    swords.overheadstrike = this.game.add.sprite(offset_x, offset_y, 'popover.button.sword.overheadstrike',null,this.layer.popover.group);
+
+    offset_y += this.game.cache.getImage('popover.button.sword.overheadstrike').height;
+    swords.thrust = this.game.add.sprite(offset_x, offset_y, 'popover.button.sword.thrust',null,this.layer.popover.group);
+
+    offset_y += this.game.cache.getImage('popover.button.sword.thrust').height;
+    swords.lowblow = this.game.add.sprite(offset_x, offset_y, 'popover.button.sword.lowblow',null,this.layer.popover.group);
+
+    this.layer.popover.button.swords = swords;
+
+    // popover shield buttons
+    var shields = {};
+    offset_x = this.game.width - 50 - this.game.cache.getImage('popover.button.shield').width;
+    offset_y = 50;
+
+    shields.raised = this.game.add.sprite(offset_x, offset_y, 'popover.button.shield', null, this.layer.popover.group);
+
+    offset_y += this.game.cache.getImage('popover.button.shield').height;
+    shields.deflect = this.game.add.sprite(offset_x, offset_y, 'popover.button.shield', null, this.layer.popover.group);
+
+    offset_y += this.game.cache.getImage('popover.button.shield').height;
+    shields.lowblock = this.game.add.sprite(offset_x, offset_y, 'popover.button.shield', null, this.layer.popover.group);
+
+
+    // hide all popover stuff
+    this.layer.popover.group.alpha = 0;
 
 
 // high - overhead
@@ -104,7 +135,7 @@ main.prototype.create = function() {
     this.layer.main = this.game.add.group();
 
     // space - castle back
-    var t_height = this.game.cache.getImage('space.castle.back').height + this.game.cache.getImage('space.castle.front').height*0.83;
+    var t_height = this.game.cache.getImage('space.castle.back').height + this.game.cache.getImage('space.castle.front').height*0.7;
     this.layer.space.castleback = this.game.add.tileSprite(0, this.game.height - t_height, this.game.width,
         this.game.cache.getImage('space.castle.back').height, 'space.castle.back', 0, this.layer.main);
 
@@ -112,8 +143,8 @@ main.prototype.create = function() {
     // Create players
     var player_pos_y = this.game.height - this.player.height
         - (this.game.cache.getImage('space.castle.front').height - ground_bound_offset);
-    this.player.one = this.game.add.sprite(this.game.width - this.player.width-150, player_pos_y, 'players', 0, this.layer.main);
-    this.player.two = this.game.add.sprite(150, player_pos_y, 'players', 7, this.layer.main);
+    this.player.one = this.game.add.sprite(this.game.width - this.player.width, player_pos_y, 'players', 0, this.layer.main);
+    this.player.two = this.game.add.sprite(0, player_pos_y, 'players', 7, this.layer.main);
 
 
 
@@ -170,19 +201,26 @@ main.prototype.create = function() {
         this.player.collided = true;
 
         // hide stuff
-        //this.layer.main.alpha = 0;
+        this.layer.main.alpha = 0;
         // this.player.one.alpha = 0;
         // this.player.two.alpha = 0;
 
         // show popover stuff
-        //this.layer.popover.group.alpha = 1;
+        this.layer.popover.group.alpha = 1;
 
     }
 
     // Since we're jumping we need gravity
     this.game.physics.arcade.gravity.y = this.GRAVITY;
+	
 
-
+	//  The score
+    this.scoreText = this.game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+	
+	//  Add and update the score
+    // this.score += 10;
+    // this.scoreText.text = 'Score: ' + score;
+	
 
     // Capture certain keys to prevent their default actions in the browser.
     // This is only necessary because this is an HTML5 game. Games on other
@@ -228,105 +266,12 @@ main.prototype.create = function() {
 		this.timeText.setText('');
     };
 
-    // timer to Begin Jouse (3 sec) and the countdown
+    // timer to
 	this.game.time.events.add(Phaser.Timer.SECOND*0.5, displayTime1, this);
 	this.game.time.events.add(Phaser.Timer.SECOND*1, displayTime2, this);
 	this.game.time.events.add(Phaser.Timer.SECOND*1.5, displayTime3, this);
 	this.game.time.events.add(Phaser.Timer.SECOND * 2, beginJoust, this);
 	this.game.time.events.add(Phaser.Timer.SECOND*2.1, displayTime4, this);
-	
-	// popover stuffs
-
-    this.layer.popover = {};
-    this.layer.popover.group = this.game.add.group();
-    //this.layer.popover.bg = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'popover.bg', null,this.layer.popover.group);
-
-    this.layer.popover.button = {};
-
-    // popover sword buttons
-    var swords = {};
-    var offset_y = 50;
-    var offset_x = 50;
-
-    swords.overheadstrike = this.game.add.sprite(offset_x, offset_y, 'popover.button.sword.overheadstrike',null,this.layer.popover.group);
-
-    offset_y += this.game.cache.getImage('popover.button.sword.overheadstrike').height;
-    swords.thrust = this.game.add.sprite(offset_x, offset_y, 'popover.button.sword.thrust',null,this.layer.popover.group);
-
-    offset_y += this.game.cache.getImage('popover.button.sword.thrust').height;
-    swords.lowblow = this.game.add.sprite(offset_x, offset_y, 'popover.button.sword.lowblow',null,this.layer.popover.group);
-
-    this.layer.popover.button.swords = swords;
-
-    // popover shield buttons
-    var shields = {};
-    offset_x = this.game.width - 50 - this.game.cache.getImage('popover.button.shield').width;
-    offset_y = 50;
-
-    shields.raised = this.game.add.sprite(offset_x, offset_y, 'popover.button.shield', null, this.layer.popover.group);
-
-    offset_y += this.game.cache.getImage('popover.button.shield').height;
-    shields.deflect = this.game.add.sprite(offset_x, offset_y, 'popover.button.shield', null, this.layer.popover.group);
-
-    offset_y += this.game.cache.getImage('popover.button.shield').height;
-    shields.lowblock = this.game.add.sprite(offset_x, offset_y, 'popover.button.shield', null, this.layer.popover.group);
-
-    // animation results
-
-
-    this.layer.popover.results = {};
-	
-	
-	// blood spatter
-    this.layer.popover.results.blood_spatter = this.game.add.sprite(
-        this.game.world.centerX - 426/6/2 *2,
-        this.game.world.centerY - 91/2 *2,
-        'results.blood_spatter', 0, this.layer.popover.group);
-
-    this.layer.popover.results.blood_spatter.animations.add('results.blood_spatter', [0, 1, 2, 3, 4, 5], 5, true);
-    this.layer.popover.results.blood_spatter.animations.play('results.blood_spatter');
-
-    this.layer.popover.results.blood_spatter.scale.setTo(2, 2);/*
-	
-	
-	// sword slash
-	this.layer.popover.results.Sword_Slash = this.game.add.sprite(
-        this.game.world.centerX - 523/4/2 *2,
-        this.game.world.centerY - 125/2 *2,
-        'results.Sword_Slash', 0, this.layer.popover.group);
-
-    this.layer.popover.results.Sword_Slash.animations.add('results.Sword_Slash', [0, 1, 2, 3], 5, true);
-    this.layer.popover.results.Sword_Slash.animations.play('results.Sword_Slash');
-
-    this.layer.popover.results.Sword_Slash.scale.setTo(2, 2);
-	
-	
-	// block animation
-	this.layer.popover.results.Block_Animation = this.game.add.sprite(
-        this.game.world.centerX - 328/3/2 *2,
-        this.game.world.centerY - 91/2 *2,
-        'results.Block_Animation', 0, this.layer.popover.group);
-
-    this.layer.popover.results.Block_Animation.animations.add('results.Block_Animation', [0, 1, 2], 5, true);
-    this.layer.popover.results.Block_Animation.animations.play('results.Block_Animation');
-
-    this.layer.popover.results.Block_Animation.scale.setTo(2, 2);
-	
-	// sword clash
-	this.layer.popover.results.Sword_Clash = this.game.add.sprite(
-        this.game.world.centerX - 287/3/2 *2,
-        this.game.world.centerY - 80/2 *2,
-        'results.Sword_Clash', 0, this.layer.popover.group);
-
-    this.layer.popover.results.Sword_Clash.animations.add('results.Sword_Clash', [0, 1, 2], 5, true);
-    this.layer.popover.results.Sword_Clash.animations.play('results.Sword_Clash');
-
-    this.layer.popover.results.Sword_Clash.scale.setTo(2, 2);*/
-
-    // hide all popover stuff
-    //this.layer.popover.group.alpha = 0;
-
-	
 };
 
 // The update() method is called every frame
