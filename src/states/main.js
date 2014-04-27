@@ -211,42 +211,42 @@ main.prototype.create = function() {
     this.layers.popover.results.blood_spatter.animations.add('results.blood_spatter', [0, 1, 2, 3, 4, 5], 5, true);
     this.layers.popover.results.blood_spatter.animations.play('results.blood_spatter');
 
-    this.layers.popover.results.blood_spatter.scale.setTo(2, 2);/*
+    this.layers.popover.results.blood_spatter.scale.setTo(2, 2);
 
 
     // sword slash
-    this.layers.popover.results.Sword_Slash = this.game.add.sprite(
-        this.game.world.centerX - 523/4/2 *2,
-        this.game.world.centerY - 125/2 *2,
-        'results.Sword_Slash', 0, this.layers.popover.group);
+    // this.layers.popover.results.Sword_Slash = this.game.add.sprite(
+    //     this.game.world.centerX - 523/4/2 *2,
+    //     this.game.world.centerY - 125/2 *2,
+    //     'results.Sword_Slash', 0, this.layers.popover.group);
 
-    this.layers.popover.results.Sword_Slash.animations.add('results.Sword_Slash', [0, 1, 2, 3], 5, true);
-    this.layers.popover.results.Sword_Slash.animations.play('results.Sword_Slash');
+    // this.layers.popover.results.Sword_Slash.animations.add('results.Sword_Slash', [0, 1, 2, 3], 5, true);
+    // this.layers.popover.results.Sword_Slash.animations.play('results.Sword_Slash');
 
-    this.layers.popover.results.Sword_Slash.scale.setTo(2, 2);
+    // this.layers.popover.results.Sword_Slash.scale.setTo(2, 2);
 
 
-    // block animation
-    this.layers.popover.results.Block_Animation = this.game.add.sprite(
-        this.game.world.centerX - 328/3/2 *2,
-        this.game.world.centerY - 91/2 *2,
-        'results.Block_Animation', 0, this.layers.popover.group);
+    // // block animation
+    // this.layers.popover.results.Block_Animation = this.game.add.sprite(
+    //     this.game.world.centerX - 328/3/2 *2,
+    //     this.game.world.centerY - 91/2 *2,
+    //     'results.Block_Animation', 0, this.layers.popover.group);
 
-    this.layers.popover.results.Block_Animation.animations.add('results.Block_Animation', [0, 1, 2], 5, true);
-    this.layers.popover.results.Block_Animation.animations.play('results.Block_Animation');
+    // this.layers.popover.results.Block_Animation.animations.add('results.Block_Animation', [0, 1, 2], 5, true);
+    // this.layers.popover.results.Block_Animation.animations.play('results.Block_Animation');
 
-    this.layers.popover.results.Block_Animation.scale.setTo(2, 2);
+    // this.layers.popover.results.Block_Animation.scale.setTo(2, 2);
 
-    // sword clash
-    this.layers.popover.results.Sword_Clash = this.game.add.sprite(
-        this.game.world.centerX - 287/3/2 *2,
-        this.game.world.centerY - 80/2 *2,
-        'results.Sword_Clash', 0, this.layers.popover.group);
+    // // sword clash
+    // this.layers.popover.results.Sword_Clash = this.game.add.sprite(
+    //     this.game.world.centerX - 287/3/2 *2,
+    //     this.game.world.centerY - 80/2 *2,
+    //     'results.Sword_Clash', 0, this.layers.popover.group);
 
-    this.layers.popover.results.Sword_Clash.animations.add('results.Sword_Clash', [0, 1, 2], 5, true);
-    this.layers.popover.results.Sword_Clash.animations.play('results.Sword_Clash');
+    // this.layers.popover.results.Sword_Clash.animations.add('results.Sword_Clash', [0, 1, 2], 5, true);
+    // this.layers.popover.results.Sword_Clash.animations.play('results.Sword_Clash');
 
-    this.layers.popover.results.Sword_Clash.scale.setTo(2, 2);*/
+    // this.layers.popover.results.Sword_Clash.scale.setTo(2, 2);
 
 
 
@@ -334,9 +334,6 @@ main.prototype.create = function() {
         // calculate score
 
         // reset game
-        this.player.one.x = this.player.data.one.pos.x;
-        this.player.two.x = this.player.data.two.pos.x;
-
         this.events.players.collided = false;
         this.events.results.begin = true;
 
@@ -354,49 +351,12 @@ main.prototype.create = function() {
     this.score.text = this.game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 
 
-
     // timer to fight
-    // TODO: align
-    this.timerText = this.game.add.bitmapText(512, 115, 'font_64','', 64);
-    this.timerText.tint = 0xC8FF00;
-
     this.timer = {};
     this.timer.duration = 3;
-
- //    this.game.add.text(
- //        512, 115, '', { font: '64px Arial', fill: '#C8FF00' }
-    // );
-
-    // var bmpText = this.game.add.bitmapText(512, 115, 'font_48','Phaser & Pixi \nrocking!', 48);
-    // bmpText.tint = 0xC8FF00;
-
-
-    // var beginJoust = function() {
-    //     this.player.one.body.acceleration.x = 0;
-    //     this.player.two.body.acceleration.x = 0;
-    //     this.joust = true;
-    // };
-
-
-    // var displayTime1 = function() {
-    //     this.timeText.setText('3');
-    // };
-    // var displayTime2 = function() {
-    //     this.timeText.setText('2');
-    // };
-    // var displayTime3 = function() {
-    //     this.timeText.setText('1');
-    // };
-    // var displayTime4 = function() {
-    //     this.timeText.setText('');
-    // };
-
-    // // timer to Begin Jouse (3 sec) and the countdown
-    // this.game.time.events.add(Phaser.Timer.SECOND*0.5, displayTime1, this);
-    // this.game.time.events.add(Phaser.Timer.SECOND*1, displayTime2, this);
-    // this.game.time.events.add(Phaser.Timer.SECOND*1.5, displayTime3, this);
-    // this.game.time.events.add(Phaser.Timer.SECOND * 2, beginJoust, this);
-    // this.game.time.events.add(Phaser.Timer.SECOND*2.1, displayTime4, this);
+    this.timer.text = this.game.add.bitmapText(this.game.world.centerX-64/2, this.game.world.centerY-64/2, 'font_64','', 64);
+    this.timer.text.tint = 0xFFDC00;
+    this.timer.text.align = 'center';
 
 
     // Show FPS
@@ -404,8 +364,6 @@ main.prototype.create = function() {
     this.fpsText = this.game.add.text(
         20, 50, '', { font: '16px Arial', fill: '#ffffff' }
     );
-
-
 
 };
 
@@ -437,17 +395,20 @@ main.prototype.update = function() {
         var updateTimer = function() {
             console.log('update timer', this.timer.duration);
 
-            this.timer.duration--;
-
             if(this.timer.duration === 0) {
+                this.timer.text.text = '';
                 this.events.timer.end = true;
                 this.events.players.joust = true;
 
                 console.log('timer end')
+            } else {
+                this.timer.text.text = this.timer.duration;
             }
+
+            this.timer.duration--;
         };
 
-        this.game.time.events.repeat(Phaser.Timer.SECOND, this.timer.duration, updateTimer, this);
+        this.game.time.events.repeat(Phaser.Timer.SECOND, this.timer.duration + 1, updateTimer, this);
 
     }
 
@@ -487,6 +448,10 @@ main.prototype.update = function() {
         console.log('results end');
         this.events.results.end = false;
         this.events.timer.begin = true;
+
+        // reset game
+        this.player.one.x = this.player.data.one.pos.x;
+        this.player.two.x = this.player.data.two.pos.x;
     }
 
 };
