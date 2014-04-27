@@ -75,7 +75,7 @@ main.prototype.preload = function() {
     this.game.load.bitmapFont('font_64', 'assets/fonts/perfect_dos_vga_437_regular_64.png', 'assets/fonts/perfect_dos_vga_437_regular_64.fnt');
 
     // Define player movement constants
-    this.MAX_SPEED = 300; // pixels/second
+    this.MAX_SPEED = 100; // pixels/second
     this.ACCELERATION = 600; // pixels/second/second
     this.DRAG = 400; // pixels/second
     this.GRAVITY = 980; // pixels/second/second
@@ -172,6 +172,14 @@ main.prototype.create = function() {
     swords.overheadstrike.events.onInputDown.add(function() {
         this.rps.player.input = 'R';
         this.rps.player.type = 'sword';
+
+        if(this.rps.player.choice) {
+            this.rps.player.choice.alpha = 0.5;
+        }
+
+        this.rps.player.choice = swords.overheadstrike;
+
+        this.rps.player.choice.alpha = 1;
     }, this);
 
 
@@ -183,6 +191,14 @@ main.prototype.create = function() {
     swords.thrust.events.onInputDown.add(function() {
         this.rps.player.input = 'P';
         this.rps.player.type = 'sword';
+
+        if(this.rps.player.choice) {
+            this.rps.player.choice.alpha = 0.5;
+        }
+
+        this.rps.player.choice = swords.thrust;
+
+        this.rps.player.choice.alpha = 1;
     }, this);
 
     offset_y += this.game.cache.getImage('popover.button.sword.thrust').height;
@@ -193,6 +209,14 @@ main.prototype.create = function() {
     swords.lowblow.events.onInputDown.add(function() {
         this.rps.player.input = 'S';
         this.rps.player.type = 'sword';
+
+        if(this.rps.player.choice) {
+            this.rps.player.choice.alpha = 0.5;
+        }
+
+        this.rps.player.choice = swords.lowblow;
+
+        this.rps.player.choice.alpha = 1;
     }, this);
 
 
@@ -210,6 +234,14 @@ main.prototype.create = function() {
     shields.raised.events.onInputDown.add(function() {
         this.rps.player.input = 'R';
         this.rps.player.type = 'shield';
+
+        if(this.rps.player.choice) {
+            this.rps.player.choice.alpha = 0.5;
+        }
+
+        this.rps.player.choice = shields.raised;
+
+        this.rps.player.choice.alpha = 1;
     }, this);
 
     offset_y += this.game.cache.getImage('popover.button.shield').height;
@@ -220,6 +252,14 @@ main.prototype.create = function() {
     shields.deflect.events.onInputDown.add(function() {
         this.rps.player.input = 'P';
         this.rps.player.type = 'shield';
+
+        if(this.rps.player.choice) {
+            this.rps.player.choice.alpha = 0.5;
+        }
+
+        this.rps.player.choice = shields.deflect;
+
+        this.rps.player.choice.alpha = 1;
     }, this);
 
     offset_y += this.game.cache.getImage('popover.button.shield').height;
@@ -230,7 +270,14 @@ main.prototype.create = function() {
     shields.lowblock.events.onInputDown.add(function() {
         this.rps.player.input = 'S';
         this.rps.player.type = 'shield';
-        console.log('fuck');
+
+        if(this.rps.player.choice) {
+            this.rps.player.choice.alpha = 0.5;
+        }
+
+        this.rps.player.choice = shields.lowblock;
+
+        this.rps.player.choice.alpha = 1;
     }, this);
 
     this.layers.popover.button.shields = shields;
@@ -465,11 +512,11 @@ main.prototype.update = function() {
                 // reenable buttons
                 _.each(this.layers.popover.button.shields, function(val) {
                     val.input.enabled = true;
-                    val.alpha = 1;
+                    val.alpha = 0.5;
                 });
                 _.each(this.layers.popover.button.swords, function(val) {
                     val.input.enabled = true;
-                    val.alpha = 1;
+                    val.alpha = 0.5;
                 });
 
                 console.log('timer end');
@@ -501,9 +548,23 @@ main.prototype.update = function() {
 
     // show results
     if(this.events.results.begin) {
-
         this.events.results.begin = false;
+
+        // disable buttons from changing
+        _.each(this.layers.popover.button.shields, function(val) {
+            val.input.enabled = false;
+        });
+        _.each(this.layers.popover.button.swords, function(val) {
+            val.input.enabled = false;
+        });
+
         console.log('show results');
+
+        console.log(this.rps.player.input, this.rps.player.type);
+
+        // reset choice
+        this.rps.player.input = null;
+        this.rps.player.type = null;
 
         var showResults = function() {
 
