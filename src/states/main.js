@@ -2,8 +2,7 @@
 /* global Phaser */
 // states/main.js
 
-var
-events = require('events');
+// var events = require('events');
 
 
 var main = function() {};
@@ -88,24 +87,24 @@ main.prototype.preload = function() {
     // TODO: unused
     this.player.data = {};
 
+    var buffer = 150;
+
     var one = {};
     one.pos = {};
-    one.pos.x = this.game.width - this.player.width;
+    one.pos.x = this.game.width - this.player.width - buffer;
     one.frame = 0;
 
     this.player.data.one = one;
 
     var two = {};
     two.pos = {};
-    two.pos.x = this.game.width - this.player.width;
+    two.pos.x = buffer;
     two.frame = 7;
 
     this.player.data.two = two;
 
     // score object
     this.score = {};
-
-
 
 };
 
@@ -256,8 +255,8 @@ main.prototype.create = function() {
                        this.player.height -
                        (this.game.cache.getImage('scene.castle.foreground').height - ground_bound_offset);
 
-    this.player.one = this.game.add.sprite(this.game.width - this.player.width-150, player_pos_y, 'players', 0, this.layers.main);
-    this.player.two = this.game.add.sprite(150, player_pos_y, 'players', 7, this.layers.main);
+    this.player.one = this.game.add.sprite(this.player.data.one.pos.x, player_pos_y, 'players', 0, this.layers.main);
+    this.player.two = this.game.add.sprite(this.player.data.two.pos.x, player_pos_y, 'players', 7, this.layers.main);
 
     this.layers.main.add(this.player.one);
     this.layers.main.add(this.player.two);
@@ -312,29 +311,34 @@ main.prototype.create = function() {
         players: {
             collided: false,
             joust: false
+        },
+
+        results: {
+            begin: false,
+            end: false
         }
     };
 
-    // this.bus = new events.EventEmitter();
-
-    this.player.joust = function() {
-
-
-
-    };
 
     this.player.collide = function() {
 
-        if(this.events.player.collided)
+        if(this.events.players.collided)
             return;
 
-        this.player.collided = true;
+        // stop jousting
+        this.events.players.joust = false;
+        this.events.players.collided = true;
 
         console.log('collided');
 
         // calculate score
 
         // reset game
+        this.player.one.x = this.player.data.one.pos.x;
+        this.player.two.x = this.player.data.two.pos.x;
+
+        this.events.players.collided = false;
+        this.events.results.begin = true;
 
     };
 
@@ -351,10 +355,13 @@ main.prototype.create = function() {
 
 
 
-    // timer to Fight
+    // timer to fight
     // TODO: align
     this.timerText = this.game.add.bitmapText(512, 115, 'font_64','', 64);
     this.timerText.tint = 0xC8FF00;
+
+    this.timer = {};
+    this.timer.duration = 3;
 
  //    this.game.add.text(
  //        512, 115, '', { font: '64px Arial', fill: '#C8FF00' }
@@ -419,48 +426,69 @@ main.prototype.update = function() {
     this.game.physics.arcade.collide(this.player.two, this.player.one, this.player.collide, null, this);
 
 
+    // setup timer
     if(this.events.timer.begin) {
         console.log('begin timer');
         this.events.timer.begin = false;
 
+        // reset data
+        this.timer.duration = 3;
+
         var updateTimer = function() {
-            console.log('update timer');
+            console.log('update timer', this.timer.duration);
+
+            this.timer.duration--;
+
+            if(this.timer.duration === 0) {
+                this.events.timer.end = true;
+                this.events.players.joust = true;
+
+                console.log('timer end')
+            }
         };
 
-        this.game.time.events.add(Phaser.Timer.SECOND * 2, updateTimer, this);
+        this.game.time.events.repeat(Phaser.Timer.SECOND, this.timer.duration, updateTimer, this);
 
     }
 
     // begin joust
     if(this.events.players.joust) {
 
+        if(this.events.timer.end)
+            this.events.timer.end = false;
 
         this.player.one.body.acceleration.x = -this.ACCELERATION;
         this.player.two.body.acceleration.x = this.ACCELERATION;
+    } else {
+
+        this.player.one.body.acceleration.x = 0;
+        this.player.two.body.acceleration.x = 0;
     }
 
+    // show results
+    if(this.events.results.begin) {
 
+        this.events.results.begin = false;
+        console.log('show results');
 
+        var showResults = function() {
 
+            this.events.results.end = true;
+            console.log('finish showing results');
+        };
 
-    // if (this.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
-    //     // If the LEFT key is down, set the player velocity to move left
-    //     this.player.one.body.acceleration.x = -this.ACCELERATION;
-    // } else if (this.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
-    //     // If the RIGHT key is down, set the player velocity to move right
-    //     this.player.one.body.acceleration.x = this.ACCELERATION;
-    // } else {
-    //     this.player.one.body.acceleration.x = 0;
-    //     // this.player.one.body.acceleration.x = -this.ACCELERATION;
-    // }
+        // delay results
+        this.game.time.events.add(Phaser.Timer.SECOND*2, showResults, this);
 
-    // // Set a variable that is true when the player is touching the ground
-    // var onTheGround = this.player.one.body.touching.down;
+    }
 
-    // if (onTheGround && this.input.keyboard.justPressed(Phaser.Keyboard.UP)) {
-    //     // Jump when the player is touching the ground and the up arrow is pressed
-    //     // this.player.body.velocity.y = this.JUMP_SPEED;
-    // }
+    if(this.events.results.end) {
+
+        console.log('results end');
+        this.events.results.end = false;
+        this.events.timer.begin = true;
+    }
+
 };
 
 main.prototype.render = function() {
