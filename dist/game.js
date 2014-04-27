@@ -122,7 +122,6 @@
 	    this.player.data.two = two;
 	
 	
-	    this.game.load.image('ground', './assets/gfx/ground.png');
 	    this.game.load.spritesheet('players', './assets/gfx/avatar.png', this.player.width, this.player.height);
 	
 	    // popover stuff
@@ -143,6 +142,7 @@
 	    // animation results
 	    this.game.load.spritesheet('results.blood_spatter', './assets/gfx/results/Blood_Splatter.png', 426/6, 91);
 	
+	
 	    // Define movement constants
 	    this.MAX_SPEED = 350; // pixels/second
 	    this.ACCELERATION = 600; // pixels/second/second
@@ -158,12 +158,12 @@
 	    // Set stage background to something sky colored
 	    // this.game.stage.backgroundColor = 0x4488cc;
 	
+	
 	    // space bg
 	    this.layer.space = {};
 	
 	    this.layer.space.bigplanet = this.game.add.sprite(10, 50, 'space.bigplanet');
 	    // this.layer.space.rockfield = this.game.add.sprite(0, 100, 'space.rockfield');
-	
 	
 	
 	    // this.layer.space.castleback.scale.setTo(1, 1);
@@ -206,6 +206,20 @@
 	    offset_y += this.game.cache.getImage('popover.button.shield').height;
 	    shields.lowblock = this.game.add.sprite(offset_x, offset_y, 'popover.button.shield', null, this.layer.popover.group);
 	
+	    // animation results
+	
+	    // blood spatter
+	    this.layer.popover.results = {};
+	
+	    this.layer.popover.results.blood_spatter = this.game.add.sprite(
+	        this.game.world.centerX - 426/6/2 *2,
+	        this.game.world.centerY - 91/2 *2,
+	        'results.blood_spatter', 0, this.layer.popover.group);
+	
+	    this.layer.popover.results.blood_spatter.animations.add('results.blood_spatter', [0, 1, 2, 3, 4, 5], 5, true);
+	    this.layer.popover.results.blood_spatter.animations.play('results.blood_spatter');
+	
+	    this.layer.popover.results.blood_spatter.scale.setTo(2, 2);
 	
 	    // hide all popover stuff
 	    this.layer.popover.group.alpha = 0;
