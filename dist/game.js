@@ -64,7 +64,9 @@
 	game.state.add("game-container", MainState, true);
 	
 	$(function() {
-	    $('body').css('background-image', pattern.toDataUrl());
+	    // $('body').css('background-image', pattern.toDataUrl());
+	    $('body').css('background-image', "url('./assets/gfx/backgrounds/asset_sky.png')");
+	
 	});
 
 
@@ -119,7 +121,16 @@
 	    this.game.load.image('ground', './assets/gfx/ground.png');
 	    this.game.load.spritesheet('players', './assets/gfx/avatar.png', this.player.width, this.player.height);
 	
+	    // popover stuff
 	    this.game.load.image('popover.bg', './assets/gfx/popover/DungeonWall.png');
+	    // popover buttons
+	    this.game.load.image('popover.button.sword.lowblow', './assets/gfx/popover/buttons/Low_Blow.png');
+	    this.game.load.image('popover.button.sword.overheadstrike', './assets/gfx/popover/buttons/Overhead_Strike.png');
+	    this.game.load.image('popover.button.sword.thrust', './assets/gfx/popover/buttons/Thrust.png');
+	    this.game.load.image('popover.button.shield', './assets/gfx/popover/buttons/Shield.png');
+	
+	    // space bg
+	    this.game.load.image('space.castle.back', './assets/gfx/backgrounds/asset_castleWall_back.png');
 	
 	    // this.data = {};
 	    // this.data.player = {};
@@ -141,10 +152,55 @@
 	    // Set stage background to something sky colored
 	    // this.game.stage.backgroundColor = 0x4488cc;
 	
-	    // popover stuffs
-	    this.layer.popover = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'popover.bg');
-	    this.layer.popover.alpha = 0;
+	    // space bg
+	    this.layer.space = {};
+	    this.layer.space.castleback = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'space.castle.back');
 	
+	    // popover stuffs
+	
+	    this.layer.popover = {};
+	    this.layer.popover.group = this.game.add.group();
+	    this.layer.popover.bg = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'popover.bg', null,this.layer.popover.group);
+	
+	    this.layer.popover.button = {};
+	
+	    // popover sword buttons
+	    var swords = {};
+	    var offset_y = 50;
+	    var offset_x = 50;
+	
+	    swords.overheadstrike = this.game.add.sprite(offset_x, offset_y, 'popover.button.sword.overheadstrike',null,this.layer.popover.group);
+	
+	    offset_y += this.game.cache.getImage('popover.button.sword.overheadstrike').height;
+	    swords.thrust = this.game.add.sprite(offset_x, offset_y, 'popover.button.sword.thrust',null,this.layer.popover.group);
+	
+	    offset_y += this.game.cache.getImage('popover.button.sword.thrust').height;
+	    swords.lowblow = this.game.add.sprite(offset_x, offset_y, 'popover.button.sword.lowblow',null,this.layer.popover.group);
+	
+	    this.layer.popover.button.swords = swords;
+	
+	    // popover shield buttons
+	    var shields = {};
+	    offset_x = this.game.width - 50 - this.game.cache.getImage('popover.button.shield').width;
+	    offset_y = 50;
+	
+	    shields.raised = this.game.add.sprite(offset_x, offset_y, 'popover.button.shield', null, this.layer.popover.group);
+	
+	    offset_y += this.game.cache.getImage('popover.button.shield').height;
+	    shields.deflect = this.game.add.sprite(offset_x, offset_y, 'popover.button.shield', null, this.layer.popover.group);
+	
+	    offset_y += this.game.cache.getImage('popover.button.shield').height;
+	    shields.lowblock = this.game.add.sprite(offset_x, offset_y, 'popover.button.shield', null, this.layer.popover.group);
+	
+	
+	    // hide all popover stuff
+	    this.layer.popover.group.alpha = 0;
+	
+	
+	// high - overhead
+	// medium - thrust
+	// low - low blow
+	// Shield raised for all 3 heights, (Raised, Deflect, Low Block)
 	
 	    // Create some ground for the player to walk on
 	    this.ground = this.game.add.group();
@@ -216,13 +272,14 @@
 	
 	        this.player.collided = true;
 	
+	        // hide stuff
 	        this.layer.main.alpha = 0;
-	
 	        // this.player.one.alpha = 0;
 	        // this.player.two.alpha = 0;
-	
 	        this.ground.alpha = 0;
-	        this.layer.popover.alpha = 1;
+	
+	        // show popover stuff
+	        this.layer.popover.group.alpha = 0;
 	
 	    }
 	
@@ -303,6 +360,14 @@
 	    //     // Jump when the player is touching the ground and the up arrow is pressed
 	    //     // this.player.body.velocity.y = this.JUMP_SPEED;
 	    // }
+	};
+	
+	main.prototype.render = function() {
+	
+	    // this.game.debug.body(this.layer.popover.button.sword.overheadstrike);
+	    // this.game.debug.body(this.layer.popover.button.sword.thrust);
+	
+	
 	};
 	
 	module.exports = main;
