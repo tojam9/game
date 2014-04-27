@@ -41,14 +41,23 @@ main.prototype.preload = function() {
 
 
     // player object
-    this.player = {
+    this.player_idle = {
         height: 92,
         width: 636/6
     };
 
+    this.player = {
+        height: 130,
+        width: 453/4
+    };
+
     /// asset loading ///
 
-    this.game.load.spritesheet('players', './assets/gfx/avatar.png', this.player.width, this.player.height);
+    // this.game.load.spritesheet('players', './assets/gfx/avatar.png', this.player.width, this.player.height);
+    this.game.load.spritesheet('player1', './assets/gfx/Paladin_Running.png', this.player.width, this.player.height);
+    this.game.load.spritesheet('player2', './assets/gfx/Dark_Knight_Running.png', this.player.width, this.player.height);
+
+    this.game.load.spritesheet('players idle', './assets/gfx/avatar.png', this.player_idle.width, this.player_idle.height);
 
     // RPS buttons
     this.game.load.image('popover.button.sword.lowblow', './assets/gfx/popover/buttons/Low_Blow.png');
@@ -66,6 +75,7 @@ main.prototype.preload = function() {
     this.game.load.image('scene.castle.back', './assets/gfx/backgrounds/asset_castleWall_back.png');
     this.game.load.image('scene.castle.foreground', './assets/gfx/backgrounds/asset_castleWall_front.png');
     this.game.load.image('space.bigplanet', './assets/gfx/backgrounds/asset_bigPlanet.png');
+    this.game.load.image('space.mountains', './assets/gfx/backgrounds/asset_mountains_choco.png');
 
     // deferred to css
     // this.game.load.image('space.rockfield', './assets/gfx/backgrounds/asset_rockLine.png');
@@ -343,28 +353,47 @@ main.prototype.create = function() {
                        this.player.height -
                        (this.game.cache.getImage('scene.castle.foreground').height - ground_bound_offset);
 
-    this.player.one = this.game.add.sprite(this.player.data.one.pos.x, player_pos_y, 'players', 0, this.layers.main);
-    this.player.two = this.game.add.sprite(this.player.data.two.pos.x, player_pos_y, 'players', 7, this.layers.main);
+    var player_pos_y_idle = this.game.height -
+                       this.player_idle.height -
+                       (this.game.cache.getImage('scene.castle.foreground').height - ground_bound_offset);
+
+    this.player.one = this.game.add.sprite(this.player.data.one.pos.x, player_pos_y, 'player1', 0, this.layers.main);
+    this.player.two = this.game.add.sprite(this.player.data.two.pos.x, player_pos_y, 'player2', 0, this.layers.main);
+
+    this.player.one_idle = this.game.add.sprite(this.player.data.one.pos.x, player_pos_y_idle, 'players idle', 0, this.layers.main);
+    this.player.two_idle = this.game.add.sprite(this.player.data.two.pos.x, player_pos_y_idle, 'players idle', 7, this.layers.main);
 
     this.layers.main.add(this.player.one);
     this.layers.main.add(this.player.two);
+    this.layers.main.add(this.player.one_idle);
+    this.layers.main.add(this.player.two_idle);
 
     // animate players
 
     // Add animation
-    this.player.one.animations.add('one.idle', [0, 1, 2, 3, 4, 5], 5, true);
-    this.player.two.animations.add('two.idle', [6, 7, 8, 9, 10, 11], 5, true);
+    this.player.one.animations.add('one.running', [0, 1, 2, 3], 5, true);
+    this.player.two.animations.add('two.running', [0, 1, 2, 3], 5, true);
+    this.player.one.animations.play('one.running');
+    this.player.two.animations.play('two.running');
 
-    this.player.one.animations.play('one.idle');
-    this.player.two.animations.play('two.idle');
+    this.player.one_idle.animations.add('one.idle', [0, 1, 2, 3, 4, 5], 5, true);
+    this.player.two_idle.animations.add('two.idle', [6, 7, 8, 9, 10, 11], 5, true);
+    this.player.one_idle.animations.play('one.idle');
+    this.player.two_idle.animations.play('two.idle');
 
     // Enable physics on the players
     this.game.physics.enable(this.player.one, Phaser.Physics.ARCADE);
     this.game.physics.enable(this.player.two, Phaser.Physics.ARCADE);
 
+    this.game.physics.enable(this.player.one_idle, Phaser.Physics.ARCADE);
+    this.game.physics.enable(this.player.two_idle, Phaser.Physics.ARCADE);
+
     // Make player collide with world boundaries so he doesn't leave the stage
     this.player.one.body.collideWorldBounds = true;
     this.player.two.body.collideWorldBounds = true;
+
+    this.player.one_idle.body.collideWorldBounds = true;
+    this.player.two_idle.body.collideWorldBounds = true;
 
     // Set player minimum and maximum movement speed
     this.player.one.body.maxVelocity.setTo(this.MAX_SPEED, this.MAX_SPEED * 10); // x, y
@@ -415,6 +444,9 @@ main.prototype.create = function() {
         // stop jousting
         this.events.players.joust = false;
         this.events.players.collided = true;
+
+        this.player.one.animations.stop('one.running');
+        this.player.two.animations.stop('two.running');
 
         // console.log('collided');
 
@@ -508,6 +540,10 @@ main.prototype.update = function() {
             val.alpha = 0;
         });
 
+        this.player.two_idle.alpha = 1;
+        this.player.one_idle.alpha = 1;
+        this.player.two.alpha = 0;
+        this.player.one.alpha = 0;
 
 
         // reset data
@@ -536,6 +572,12 @@ main.prototype.update = function() {
 
                 this.rps.ai.input = 'RPS'[parseInt(sha256.hash(this.rps.ai.state),16)%3]
                 this.rps.ai.type = ['sword', 'shield'][Math.floor(Math.random() * (1 + 1))];
+
+                this.player.two_idle.alpha = 0;
+                this.player.one_idle.alpha = 0;
+
+                this.player.two.alpha = 1;
+                this.player.one.alpha = 1;
 
                 // console.log('timer end');
 
@@ -811,6 +853,10 @@ main.prototype.update = function() {
         // reset game
         this.player.one.x = this.player.data.one.pos.x;
         this.player.two.x = this.player.data.two.pos.x;
+
+        this.player.one.animations.play('one.running');
+        this.player.two.animations.play('two.running');
+
     }
 
 };
@@ -818,7 +864,7 @@ main.prototype.update = function() {
 main.prototype.render = function() {
 
     // this.game.debug.body(this.layers.space.castlefront);
-    // this.game.debug.body(this.player.one);
+    // this.game.debug.body(this.player.one_idle);
     // this.game.debug.body(this.player.two);
 
 };
