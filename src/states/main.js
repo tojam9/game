@@ -16,7 +16,7 @@ main.prototype.preload = function() {
     this.player.height = 92;
     this.player.width = 636/6;
     this.player.data = {};
-	
+
 	this.score = 0;
 	this.scoreText;
 
@@ -66,7 +66,14 @@ main.prototype.preload = function() {
     this.GRAVITY = 980; // pixels/second/second
     this.JUMP_SPEED = -300; // pixels/second (negative y is up)
 
+    // some font
+    this.game.load.bitmapFont('font_48', 'assets/fonts/perfect_dos_vga_437_regular_48.png', 'assets/fonts/perfect_dos_vga_437_regular_48.fnt');
+    this.game.load.bitmapFont('font_64', 'assets/fonts/perfect_dos_vga_437_regular_64.png', 'assets/fonts/perfect_dos_vga_437_regular_64.fnt');
+
+
 };
+
+
 
 // Setup the example
 main.prototype.create = function() {
@@ -85,12 +92,12 @@ main.prototype.create = function() {
 
 	//  The score
     this.scoreText = this.game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
-	
+
 	//  Add and update the score
     //this.score += 10;
     this.scoreText.text = 'Score: ' + this.score;
 
-    
+
 
 
 // high - overhead
@@ -203,9 +210,17 @@ main.prototype.create = function() {
 
 
     // timer to Fight
-	this.timeText = this.game.add.text(
-        512, 115, '', { font: '64px Arial', fill: '#C8FF00' }
-	);
+    // TODO: align
+	this.timeText = this.game.add.bitmapText(512, 115, 'font_64','', 64);
+    this.timeText.tint = 0xC8FF00;
+
+ //    this.game.add.text(
+ //        512, 115, '', { font: '64px Arial', fill: '#C8FF00' }
+	// );
+
+    // var bmpText = this.game.add.bitmapText(512, 115, 'font_48','Phaser & Pixi \nrocking!', 48);
+    // bmpText.tint = 0xC8FF00;
+
 
     this.joust = false;
     var beginJoust = function() {
@@ -213,8 +228,8 @@ main.prototype.create = function() {
         this.player.two.body.acceleration.x = 0;
         this.joust = true;
     };
-	
-	
+
+
 	var displayTime1 = function() {
 		this.timeText.setText('3');
     };
@@ -234,7 +249,7 @@ main.prototype.create = function() {
 	this.game.time.events.add(Phaser.Timer.SECOND*1.5, displayTime3, this);
 	this.game.time.events.add(Phaser.Timer.SECOND * 2, beginJoust, this);
 	this.game.time.events.add(Phaser.Timer.SECOND*2.1, displayTime4, this);
-	
+
 	// popover stuffs
 
     this.layer.popover = {};
@@ -275,8 +290,8 @@ main.prototype.create = function() {
 
 
     this.layer.popover.results = {};
-	
-	
+
+
 	// blood spatter
     this.layer.popover.results.blood_spatter = this.game.add.sprite(
         this.game.world.centerX - 426/6/2 *2,
@@ -287,8 +302,8 @@ main.prototype.create = function() {
     this.layer.popover.results.blood_spatter.animations.play('results.blood_spatter');
 
     this.layer.popover.results.blood_spatter.scale.setTo(2, 2);/*
-	
-	
+
+
 	// sword slash
 	this.layer.popover.results.Sword_Slash = this.game.add.sprite(
         this.game.world.centerX - 523/4/2 *2,
@@ -299,8 +314,8 @@ main.prototype.create = function() {
     this.layer.popover.results.Sword_Slash.animations.play('results.Sword_Slash');
 
     this.layer.popover.results.Sword_Slash.scale.setTo(2, 2);
-	
-	
+
+
 	// block animation
 	this.layer.popover.results.Block_Animation = this.game.add.sprite(
         this.game.world.centerX - 328/3/2 *2,
@@ -311,7 +326,7 @@ main.prototype.create = function() {
     this.layer.popover.results.Block_Animation.animations.play('results.Block_Animation');
 
     this.layer.popover.results.Block_Animation.scale.setTo(2, 2);
-	
+
 	// sword clash
 	this.layer.popover.results.Sword_Clash = this.game.add.sprite(
         this.game.world.centerX - 287/3/2 *2,
@@ -326,7 +341,8 @@ main.prototype.create = function() {
     // hide all popover stuff
     //this.layer.popover.group.alpha = 0;
 
-	
+
+
 };
 
 // The update() method is called every frame
