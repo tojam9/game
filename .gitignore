@@ -1,4 +1,4 @@
-./dist/*
+
 lib-cov
 *.seed
 *.log
@@ -11,6 +11,8 @@ lib-cov
 pids
 logs
 ./results
+dist/*
+etc/*
 
 npm-debug.log
 node_modules
