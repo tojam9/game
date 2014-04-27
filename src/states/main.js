@@ -45,11 +45,13 @@ main.prototype.preload = function() {
 
     // space bg
     this.game.load.image('space.castle.back', './assets/gfx/backgrounds/asset_castleWall_back.png');
+    this.game.load.image('space.castle.front', './assets/gfx/backgrounds/asset_castleWall_front.png');
+    this.game.load.image('space.bigplanet', './assets/gfx/backgrounds/asset_bigPlanet.png');
+    // this.game.load.image('space.rockfield', './assets/gfx/backgrounds/asset_rockLine.png');
 
-    // this.data = {};
-    // this.data.player = {};
-    // this.data.player.height = 105;
-    // this.data.player.width = 92;
+
+    // animation results
+    this.game.load.spritesheet('results.blood_spatter', './assets/gfx/results/Blood_Splatter.png', 426/6, 91);
 
     // Define movement constants
     this.MAX_SPEED = 350; // pixels/second
@@ -68,7 +70,15 @@ main.prototype.create = function() {
 
     // space bg
     this.layer.space = {};
-    this.layer.space.castleback = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'space.castle.back');
+
+    this.layer.space.bigplanet = this.game.add.sprite(10, 50, 'space.bigplanet');
+    // this.layer.space.rockfield = this.game.add.sprite(0, 100, 'space.rockfield');
+
+
+
+    // this.layer.space.castleback.scale.setTo(1, 1);
+
+
 
     // popover stuffs
 
@@ -116,37 +126,38 @@ main.prototype.create = function() {
 // low - low blow
 // Shield raised for all 3 heights, (Raised, Deflect, Low Block)
 
-    // Create some ground for the player to walk on
-    this.ground = this.game.add.group();
-    this.ground.data = {};
-    this.ground.data.height = 32;
-    this.ground.data.offset = 32/2;
+    var ground_bound_offset = 50;
 
-    var
-    ground_bound_offset = 32/2;
+    // main layer
+    this.layer.main = this.game.add.group();
 
-    for(var x = 0; x < this.game.width; x += 32) {
-
-        // Add the ground blocks, enable physics on each, make them immovable
-        var groundBlock = this.game.add.sprite(x, this.game.height - 32, 'ground');
-
-        this.game.physics.enable(groundBlock, Phaser.Physics.ARCADE);
-        groundBlock.body.immovable = true;
-        groundBlock.body.allowGravity = false;
-
-        // change ground collision bounds
-        groundBlock.body.setSize(32, 32 - ground_bound_offset, 0, ground_bound_offset);
-
-        this.ground.add(groundBlock);
-    }
-
+    // space - castle back
+    var t_height = this.game.cache.getImage('space.castle.back').height + this.game.cache.getImage('space.castle.front').height*0.7;
+    this.layer.space.castleback = this.game.add.tileSprite(0, this.game.height - t_height, this.game.width,
+        this.game.cache.getImage('space.castle.back').height, 'space.castle.back', 0, this.layer.main);
 
 
     // Create players
-    this.layer.main = this.game.add.group();
-    var player_pos_y = this.game.height - this.player.height - ground_bound_offset;
+    var player_pos_y = this.game.height - this.player.height
+        - (this.game.cache.getImage('space.castle.front').height - ground_bound_offset);
     this.player.one = this.game.add.sprite(this.game.width - this.player.width, player_pos_y, 'players', 0, this.layer.main);
     this.player.two = this.game.add.sprite(0, player_pos_y, 'players', 7, this.layer.main);
+
+
+
+    // space - castle front
+    var t_height = this.game.cache.getImage('space.castle.front').height;
+    this.layer.space.castlefront = this.game.add.tileSprite(0, this.game.height - t_height, this.game.width,
+        t_height, 'space.castle.front', 0, this.layer.main);
+
+    this.game.physics.enable(this.layer.space.castlefront, Phaser.Physics.ARCADE);
+    this.layer.space.castlefront.body.immovable = true;
+    this.layer.space.castlefront.body.allowGravity = false;
+
+
+    this.layer.space.castlefront.body.setSize(this.game.width,
+        this.game.cache.getImage('space.castle.front').height - ground_bound_offset, 0, ground_bound_offset);
+
 
 
     // this.player_one.scale.setTo(0.7, 0.7);
@@ -190,10 +201,9 @@ main.prototype.create = function() {
         this.layer.main.alpha = 0;
         // this.player.one.alpha = 0;
         // this.player.two.alpha = 0;
-        this.ground.alpha = 0;
 
         // show popover stuff
-        this.layer.popover.group.alpha = 0;
+        this.layer.popover.group.alpha = 1;
 
     }
 
@@ -241,8 +251,8 @@ main.prototype.update = function() {
     }
 
     // Collide the player with the ground
-    this.game.physics.arcade.collide(this.player.one, this.ground);
-    this.game.physics.arcade.collide(this.player.two, this.ground);
+    this.game.physics.arcade.collide(this.player.one, this.layer.space.castlefront);
+    this.game.physics.arcade.collide(this.player.two, this.layer.space.castlefront);
 
     // Collision between players
     this.game.physics.arcade.collide(this.player.two, this.player.one, this.player.collide, null, this);
@@ -278,9 +288,9 @@ main.prototype.update = function() {
 
 main.prototype.render = function() {
 
-    // this.game.debug.body(this.layer.popover.button.sword.overheadstrike);
-    // this.game.debug.body(this.layer.popover.button.sword.thrust);
-
+    // this.game.debug.body(this.layer.space.castlefront);
+    // this.game.debug.body(this.player.one);
+    // this.game.debug.body(this.player.two);
 
 };
 
