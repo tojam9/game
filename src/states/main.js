@@ -75,7 +75,7 @@ main.prototype.preload = function() {
     this.game.load.bitmapFont('font_64', 'assets/fonts/perfect_dos_vga_437_regular_64.png', 'assets/fonts/perfect_dos_vga_437_regular_64.fnt');
 
     // Define player movement constants
-    this.MAX_SPEED = 100; // pixels/second
+    this.MAX_SPEED = 500; // pixels/second
     this.ACCELERATION = 600; // pixels/second/second
     this.DRAG = 400; // pixels/second
     this.GRAVITY = 980; // pixels/second/second
@@ -283,23 +283,22 @@ main.prototype.create = function() {
     this.layers.popover.button.shields = shields;
 
 
-
     // RPS result animations
     this.layers.popover.results = {};
 
 
     // blood spatter
-    this.layers.popover.results.blood_spatter = this.game.add.sprite(
-        this.game.world.centerX - 426/6/2 *2,
-        this.game.world.centerY - 91/2 *2,
-        'results.blood_spatter', 0, this.layers.popover.group);
+    // this.layers.popover.results.blood_spatter = this.game.add.sprite(
+    //     this.game.world.centerX - 426/6/2 *2,
+    //     this.game.world.centerY - 91/2 *2,
+    //     'results.blood_spatter', 0, this.layers.popover.group);
 
-    this.layers.popover.group.add(this.layers.popover.results.blood_spatter);
+    // this.layers.popover.group.add(this.layers.popover.results.blood_spatter);
 
-    this.layers.popover.results.blood_spatter.animations.add('results.blood_spatter', [0, 1, 2, 3, 4, 5], 5, true);
-    this.layers.popover.results.blood_spatter.animations.play('results.blood_spatter');
+    // this.layers.popover.results.blood_spatter.animations.add('results.blood_spatter', [0, 1, 2, 3, 4, 5], 5, true);
+    // this.layers.popover.results.blood_spatter.animations.play('results.blood_spatter');
 
-    this.layers.popover.results.blood_spatter.scale.setTo(2, 2);
+    // this.layers.popover.results.blood_spatter.scale.setTo(2, 2);
 
 
     // sword slash
@@ -439,10 +438,20 @@ main.prototype.create = function() {
     // timer to fight
     this.timer = {};
     this.timer.duration = 3;
-    this.timer.text = this.game.add.bitmapText(this.game.world.centerX-64/2, this.game.world.centerY-64/2, 'font_64','', 64);
+    this.timer.text = this.game.add.bitmapText(this.game.world.centerX, this.game.world.centerY, 'font_64','', 64);
     this.timer.text.tint = 0xFFDC00;
     this.timer.text.align = 'center';
+    this.timer.text.x = this.game.width / 2 - this.timer.text.textWidth / 2;
+    this.timer.text.y = this.game.height / 2 - this.timer.text.textHeight / 2;
 
+
+    // status text
+    this.status = {};
+    this.status.text = this.game.add.bitmapText(this.game.world.centerX, this.game.world.centerY, 'font_64','', 64);
+    this.status.text.tint = 0x01FF70;
+    this.status.text.align = 'center';
+    this.status.text.x = this.game.width / 2 - this.status.text.textWidth / 2;
+    this.status.text.y = this.game.height - this.status.text.textHeight - 50;
 
     // Show FPS
     this.game.time.advancedTiming = true;
@@ -499,7 +508,7 @@ main.prototype.update = function() {
 
 
         // reset data
-        this.timer.duration = 3;
+        this.timer.duration = 0;
 
         var updateTimer = function() {
             console.log('update timer', this.timer.duration);
@@ -523,6 +532,9 @@ main.prototype.update = function() {
 
             } else {
                 this.timer.text.text = this.timer.duration;
+
+                this.timer.text.x = this.game.width / 2 - this.timer.text.textWidth / 2;
+                this.timer.text.y = this.game.height / 2 - this.timer.text.textHeight / 2;
             }
 
             this.timer.duration--;
@@ -558,9 +570,28 @@ main.prototype.update = function() {
             val.input.enabled = false;
         });
 
+
+        // process RPS
+        if(this.rps.player.input === null || this.rps.player.type == null) {
+
+            this.status.text.text = 'CHOOSE SOMETHING!';
+
+        } else {
+            this.status.text.text = this.rps.player.input + ' ' + this.rps.player.type;
+            this.status.text.x = this.game.width / 2 - this.status.text.textWidth / 2;
+            this.status.text.y = this.game.height - this.status.text.textHeight - 50;
+        }
+
+
+
         console.log('show results');
 
         console.log(this.rps.player.input, this.rps.player.type);
+
+        // align text
+        this.status.text.updateTransform();
+        this.status.text.y = this.game.height - this.status.text.textHeight - 50;
+        this.status.text.x = this.game.width / 2 - this.status.text.textWidth / 2;
 
         // reset choice
         this.rps.player.input = null;
@@ -570,6 +601,8 @@ main.prototype.update = function() {
 
             this.events.results.end = true;
             console.log('finish showing results');
+
+            this.status.text.text = '';
         };
 
         // delay results
