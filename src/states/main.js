@@ -168,6 +168,13 @@ main.prototype.create = function() {
     swords.overheadstrike = this.game.add.sprite(offset_x, offset_y, 'popover.button.sword.overheadstrike', null, this.layers.popover.group);
     this.layers.popover.group.add(swords.overheadstrike);
 
+    swords.overheadstrike.inputEnabled = true;
+
+	var listener = function() {
+	console.log('lol');
+	};
+
+    swords.overheadstrike.events.onInputDown.add(listener, this);
     offset_y += this.game.cache.getImage('popover.button.sword.overheadstrike').height;
     swords.thrust = this.game.add.sprite(offset_x, offset_y, 'popover.button.sword.thrust',null,this.layers.popover.group);
     this.layers.popover.group.add(swords.thrust);
