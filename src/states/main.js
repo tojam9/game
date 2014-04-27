@@ -1,11 +1,12 @@
-/* jshint browser: true, undef: true, unused: true */
+/* jshint node:true, browser: true, undef: true, unused: true, devel: true */
+/* global Phaser */
 // states/main.js
 
-var _ = require('lodash');
+var
+events = require('events');
 
 
-var main = function(game) {
-};
+var main = function() {};
 
 // Load images and sounds
 main.prototype.preload = function() {
@@ -101,8 +102,8 @@ main.prototype.preload = function() {
 
     this.player.data.two = two;
 
-    // score data
-    this.score = 0;
+    // score object
+    this.score = {};
 
 
 
@@ -287,13 +288,6 @@ main.prototype.create = function() {
     this.player.one.body.drag.setTo(this.DRAG, 0); // x, y
     this.player.two.body.drag.setTo(this.DRAG, 0); // x, y
 
-    //  Scoring
-    this.scoreText = this.game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
-
-    //  Add and update the score
-    //this.score += 10;
-    this.scoreText.text = 'Score: ' + this.score;
-
 
     // Capture certain keys to prevent their default actions in the browser.
     // This is only necessary because this is an HTML5 game. Games on other
@@ -307,44 +301,60 @@ main.prototype.create = function() {
 
 
     /// events ///
+    var E = 0;
+    this.events = {
 
-    this.player.collided = false;
+        timer: {
+            begin: true,
+            end: false
+        },
+
+        players: {
+            collided: false,
+            joust: false
+        }
+    };
+
+    // this.bus = new events.EventEmitter();
+
+    this.player.joust = function() {
+
+
+
+    };
 
     this.player.collide = function() {
 
-        if(this.player.collided)
+        if(this.events.player.collided)
             return;
 
         this.player.collided = true;
 
-        console.log('collided')
+        console.log('collided');
 
-    }
+        // calculate score
+
+        // reset game
+
+    };
 
 
     //  Scoring
-    this.scoreText = this.game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+    this.score.text = this.game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 
     //  Add and update the score
     //this.score += 10;
-    this.scoreText.text = 'Score: ' + this.score;
+    this.score.text.text = 'Score: 0';
 
+    //  Scoring
+    this.score.text = this.game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 
-
-
-
-
-    // Show FPS
-    this.game.time.advancedTiming = true;
-    this.fpsText = this.game.add.text(
-        20, 50, '', { font: '16px Arial', fill: '#ffffff' }
-    );
 
 
     // timer to Fight
     // TODO: align
-    this.timeText = this.game.add.bitmapText(512, 115, 'font_64','', 64);
-    this.timeText.tint = 0xC8FF00;
+    this.timerText = this.game.add.bitmapText(512, 115, 'font_64','', 64);
+    this.timerText.tint = 0xC8FF00;
 
  //    this.game.add.text(
  //        512, 115, '', { font: '64px Arial', fill: '#C8FF00' }
@@ -354,35 +364,39 @@ main.prototype.create = function() {
     // bmpText.tint = 0xC8FF00;
 
 
-    this.joust = false;
-    var beginJoust = function() {
-        this.player.one.body.acceleration.x = 0;
-        this.player.two.body.acceleration.x = 0;
-        this.joust = true;
-    };
+    // var beginJoust = function() {
+    //     this.player.one.body.acceleration.x = 0;
+    //     this.player.two.body.acceleration.x = 0;
+    //     this.joust = true;
+    // };
 
 
-    var displayTime1 = function() {
-        this.timeText.setText('3');
-    };
-    var displayTime2 = function() {
-        this.timeText.setText('2');
-    };
-    var displayTime3 = function() {
-        this.timeText.setText('1');
-    };
-    var displayTime4 = function() {
-        this.timeText.setText('');
-    };
+    // var displayTime1 = function() {
+    //     this.timeText.setText('3');
+    // };
+    // var displayTime2 = function() {
+    //     this.timeText.setText('2');
+    // };
+    // var displayTime3 = function() {
+    //     this.timeText.setText('1');
+    // };
+    // var displayTime4 = function() {
+    //     this.timeText.setText('');
+    // };
 
-    // timer to Begin Jouse (3 sec) and the countdown
-    this.game.time.events.add(Phaser.Timer.SECOND*0.5, displayTime1, this);
-    this.game.time.events.add(Phaser.Timer.SECOND*1, displayTime2, this);
-    this.game.time.events.add(Phaser.Timer.SECOND*1.5, displayTime3, this);
-    this.game.time.events.add(Phaser.Timer.SECOND * 2, beginJoust, this);
-    this.game.time.events.add(Phaser.Timer.SECOND*2.1, displayTime4, this);
+    // // timer to Begin Jouse (3 sec) and the countdown
+    // this.game.time.events.add(Phaser.Timer.SECOND*0.5, displayTime1, this);
+    // this.game.time.events.add(Phaser.Timer.SECOND*1, displayTime2, this);
+    // this.game.time.events.add(Phaser.Timer.SECOND*1.5, displayTime3, this);
+    // this.game.time.events.add(Phaser.Timer.SECOND * 2, beginJoust, this);
+    // this.game.time.events.add(Phaser.Timer.SECOND*2.1, displayTime4, this);
 
 
+    // Show FPS
+    this.game.time.advancedTiming = true;
+    this.fpsText = this.game.add.text(
+        20, 50, '', { font: '16px Arial', fill: '#ffffff' }
+    );
 
 
 
@@ -392,7 +406,7 @@ main.prototype.create = function() {
 
 main.prototype.update = function() {
 
-
+    // FPS
     if (this.game.time.fps !== 0) {
         this.fpsText.setText(this.game.time.fps + ' FPS');
     }
@@ -404,7 +418,23 @@ main.prototype.update = function() {
     // Collision between players
     this.game.physics.arcade.collide(this.player.two, this.player.one, this.player.collide, null, this);
 
-    if(this.joust) {
+
+    if(this.events.timer.begin) {
+        console.log('begin timer');
+        this.events.timer.begin = false;
+
+        var updateTimer = function() {
+            console.log('update timer');
+        };
+
+        this.game.time.events.add(Phaser.Timer.SECOND * 2, updateTimer, this);
+
+    }
+
+    // begin joust
+    if(this.events.players.joust) {
+
+
         this.player.one.body.acceleration.x = -this.ACCELERATION;
         this.player.two.body.acceleration.x = this.ACCELERATION;
     }
