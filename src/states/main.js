@@ -40,6 +40,10 @@ main.prototype.preload = function() {
     this.layers.popover.group = this.game.add.group();
     this.layers.popover.group.z = R++;
 
+    // parry layer
+    this.layers.parry = {};
+    this.layers.parry.group = this.game.add.group();
+    this.layers.parry.group.z = R++;
 
     // player object
     this.player_idle = {
@@ -78,11 +82,14 @@ main.prototype.preload = function() {
     this.game.load.image('space.bigplanet', './assets/gfx/backgrounds/asset_bigPlanet.png');
     this.game.load.image('space.mountains', './assets/gfx/backgrounds/asset_mountains_choco.png');
 
+    this.game.load.image('title', './assets/gfx/asset_titleScreen.png');
+
     // deferred to css
     // this.game.load.image('space.rockfield', './assets/gfx/backgrounds/asset_rockLine.png');
 
 
     // font loading
+    this.game.load.bitmapFont('font_32', 'assets/fonts/perfect_dos_vga_437_regular_32.png', 'assets/fonts/perfect_dos_vga_437_regular_32.fnt');
     this.game.load.bitmapFont('font_48', 'assets/fonts/perfect_dos_vga_437_regular_48.png', 'assets/fonts/perfect_dos_vga_437_regular_48.fnt');
     this.game.load.bitmapFont('font_64', 'assets/fonts/perfect_dos_vga_437_regular_64.png', 'assets/fonts/perfect_dos_vga_437_regular_64.fnt');
 
@@ -125,24 +132,25 @@ main.prototype.preload = function() {
 // Setup the example
 main.prototype.create = function() {
 
+
     this.music = this.game.add.audio('boden');
     this.music.play();
     var
     t_height,
     // resize castle foreground collision box height
-    ground_bound_offset = 50;
+    ground_bound_offset = 100;
 
     // set up scene
 
     // add bigplanet
-    this.layers.space.bigplanet = this.game.add.sprite(10, 50, 'space.bigplanet', this.layers.space.group);
+    this.layers.space.bigplanet = this.game.add.sprite(10, 25, 'space.bigplanet', this.layers.space.group);
     this.layers.space.group.add(this.layers.space.bigplanet);
 
 
     // castle backdrop
     // y position
     t_height = this.game.cache.getImage('scene.castle.back').height +
-    this.game.cache.getImage('scene.castle.foreground').height*0.83;
+    this.game.cache.getImage('scene.castle.foreground').height*0.55;
 
     this.layers.space.castleback = this.game.add.tileSprite(0, this.game.height - t_height, this.game.width,
         this.game.cache.getImage('scene.castle.back').height, 'scene.castle.back', 0, this.layers.backdrop.group);
@@ -152,7 +160,7 @@ main.prototype.create = function() {
 
     // castle foreground
     t_height = this.game.cache.getImage('scene.castle.foreground').height;
-    this.layers.space.castlefront = this.game.add.tileSprite(0, this.game.height - t_height, this.game.width,
+    this.layers.space.castlefront = this.game.add.tileSprite(0, this.game.height - t_height + 50, this.game.width,
         t_height, 'scene.castle.foreground', 0, this.layers.foreground.group);
 
     this.layers.foreground.group.add(this.layers.space.castlefront);
@@ -169,6 +177,59 @@ main.prototype.create = function() {
 
     // note: deferred to css
     // this.layers.space.rockfield = this.game.add.sprite(0, 100, 'space.rockfield');
+
+    // parry button
+    this.parry = {};
+    this.parry.shield = this.game.add.sprite(
+        this.game.world.centerX - this.game.cache.getImage('popover.button.sword.thrust').width/2,
+        this.game.world.centerY - this.game.cache.getImage('popover.button.sword.thrust').height/2,
+        'popover.button.sword.thrust', null, this.layers.parry.group);
+
+    this.parry.text = this.game.add.bitmapText(this.game.world.centerX, this.game.world.centerY, 'font_32','PARRY', 32, this.layers.parry.group);
+    this.parry.text.tint = 0xFFDC00;
+    this.parry.text.align = 'center';
+    this.parry.text.x = this.game.width / 2 - this.parry.text.textWidth / 2;
+    this.parry.text.y = this.game.height / 2 - this.parry.text.textHeight / 2 + 32;
+
+    this.parry.text.inputEnabled = true;
+    this.parry.shield.inputEnabled = true;
+
+    this.parry.text.alpha = 0;
+    this.parry.shield.alpha = 0;
+    this.parry.text.input.enabled = false;
+    this.parry.shield.input.enabled = false;
+
+    this.parry.shield.events.onInputDown.add(function() {
+
+        // console.log('parried');
+
+        this.parry.text.alpha = 0;
+        this.parry.shield.alpha = 0;
+
+        this.parry.text.input.enabled = false;
+        this.parry.shield.input.enabled = false;
+
+        this.score.num += 2;
+
+        this.score.text.text = 'Score: ' + this.score.num;
+
+    }, this);
+
+    this.parry.text.events.onInputDown.add(function() {
+
+        // console.log('parried');
+
+        this.parry.text.alpha = 0;
+        this.parry.shield.alpha = 0;
+
+        this.parry.text.input.enabled = false;
+        this.parry.shield.input.enabled = false;
+
+        this.score.num += 2;
+
+        this.score.text.text = 'Score: ' + this.score.num;
+
+    }, this);
 
 
     // popover buttons
@@ -461,14 +522,12 @@ main.prototype.create = function() {
 
 
     //  Scoring
-    this.score.text = this.game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+    this.score.text = this.game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#fff' });
+    this.score.num = 0;
 
     //  Add and update the score
     //this.score += 10;
-    this.score.text.text = 'Score: 0';
-
-    //  Scoring
-    this.score.text = this.game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+    this.score.text.text = 'Score: ' + this.score.num;
 
 
     // timer to fight
@@ -509,11 +568,24 @@ main.prototype.create = function() {
         last_move: ''
     };
 
+    // title
+    this.title_screen = this.game.add.sprite(0, 0, 'title');
+    this.title_screen.alpha = 1;
+
+    // delay results
+    this.game.time.events.add(Phaser.Timer.SECOND*3, function() {
+        this.title_screen.alpha = 0;
+    }, this);
+
 };
 
 // The update() method is called every frame
 
 main.prototype.update = function() {
+
+    if(this.title_screen.alpha === 1) {
+        return;
+    }
 
     // FPS
     if (this.game.time.fps !== 0) {
@@ -550,7 +622,7 @@ main.prototype.update = function() {
 
 
         // reset data
-        this.timer.duration = 0;
+        this.timer.duration = 3;
 
         var updateTimer = function() {
             // console.log('update timer', this.timer.duration);
@@ -617,12 +689,12 @@ main.prototype.update = function() {
         this.events.results.begin = false;
 
         // disable buttons from changing
-        _.each(this.layers.popover.button.shields, function(val) {
-            val.input.enabled = false;
-        });
-        _.each(this.layers.popover.button.swords, function(val) {
-            val.input.enabled = false;
-        });
+        // _.each(this.layers.popover.button.shields, function(val) {
+        //     val.input.enabled = false;
+        // });
+        // _.each(this.layers.popover.button.swords, function(val) {
+        //     val.input.enabled = false;
+        // });
 
         var anim_sprite = null;
 
@@ -630,6 +702,8 @@ main.prototype.update = function() {
         if(this.rps.player.input === null || this.rps.player.type == null) {
 
             this.status.text.text = 'CHOOSE SOMETHING!';
+            this.events.results.begin = true;
+
 
         } else {
 
@@ -638,6 +712,14 @@ main.prototype.update = function() {
 
             // null case
             if (this.rps.player.input === this.rps.ai.input) {
+
+                // parry chance
+                this.parry.text.alpha = 1;
+                this.parry.shield.alpha = 1;
+
+                this.parry.text.input.enabled = true;
+                this.parry.shield.input.enabled = true;
+
 
                 if (this.rps.player.type === this.rps.ai.type) {
 
@@ -677,7 +759,7 @@ main.prototype.update = function() {
 
                             if(this.rps.ai.type == 'sword') {
                                 // this.rps.player.type = 'sword' or 'shield'
-                                this.status.text.text = 'YOU DIED!';
+                                this.status.text.text = 'YOU GOT HIT!';
 
                                 anim_sprite = this.layers.popover.results.blood_spatter;
 
@@ -702,7 +784,9 @@ main.prototype.update = function() {
                             // this.rps.ai.type == 'sword' or 'shield'
 
                             if(this.rps.player.type == 'sword') {
-                                this.status.text.text = 'YOU WIN!';
+                                this.status.text.text = 'YOU HIT!';
+
+                                this.score.num += 1;
 
                                 anim_sprite = this.layers.popover.results.swordslash;
 
@@ -721,7 +805,7 @@ main.prototype.update = function() {
 
                             if(this.rps.ai.type == 'sword') {
                                 // this.rps.player.type = 'sword' or 'shield'
-                                this.status.text.text = 'YOU DIED!';
+                                this.status.text.text = 'YOU GOT HIT!';
 
                                 anim_sprite = this.layers.popover.results.blood_spatter;
 
@@ -745,7 +829,9 @@ main.prototype.update = function() {
                             // this.rps.ai.type == 'sword' or 'shield'
 
                             if(this.rps.player.type == 'sword') {
-                                this.status.text.text = 'YOU WIN!';
+                                this.status.text.text = 'YOU HIT!';
+
+                                this.score.num += 1;
 
                                 anim_sprite = this.layers.popover.results.swordslash;
 
@@ -764,7 +850,7 @@ main.prototype.update = function() {
 
                             if(this.rps.ai.type == 'sword') {
                                 // this.rps.player.type = 'sword' or 'shield'
-                                this.status.text.text = 'YOU DIED!';
+                                this.status.text.text = 'YOU GOT HIT!';
 
                                 anim_sprite = this.layers.popover.results.blood_spatter;
 
@@ -788,9 +874,11 @@ main.prototype.update = function() {
                             // this.rps.ai.type == 'sword' or 'shield'
 
                             if(this.rps.player.type == 'sword') {
-                                this.status.text.text = 'YOU WIN!';
+                                this.status.text.text = 'YOU HIT!';
 
                                 anim_sprite = this.layers.popover.results.swordslash;
+
+                                this.score.num += 1;
 
                             } else {
                                 // this.rps.player.type == 'shield'
@@ -819,35 +907,47 @@ main.prototype.update = function() {
         // console.log('show results');
 
         // console.log(this.rps.player.input, this.rps.player.type);
-        console.log(this.rps.ai.input, this.rps.ai.type);
+        // console.log(this.rps.ai.input, this.rps.ai.type);
 
         // align text
         this.status.text.updateTransform();
         this.status.text.y = this.game.height - this.status.text.textHeight - 50;
         this.status.text.x = this.game.width / 2 - this.status.text.textWidth / 2;
 
-        // reset choice
-        this.rps.player.input = null;
-        this.rps.player.type = null;
+        if(this.events.results.begin === false) {
 
-        var showResults = function() {
+            this.score.text.text = 'Score: ' + this.score.num;
 
-            if(anim_sprite !== null) {
-                anim_sprite.alpha = 0;
-            }
+            // reset choice
+            this.rps.player.input = null;
+            this.rps.player.type = null;
 
-            this.events.results.end = true;
-            // console.log('finish showing results');
+            var showResults = function() {
 
-            this.status.text.text = '';
-        };
+                if(anim_sprite !== null) {
+                    anim_sprite.alpha = 0;
+                }
 
-        // delay results
-        this.game.time.events.add(Phaser.Timer.SECOND*2, showResults, this);
+                this.events.results.end = true;
+                // console.log('finish showing results');
 
+                this.status.text.text = '';
+            };
+
+            // delay results
+            this.game.time.events.add(Phaser.Timer.SECOND*2, showResults, this);
+
+        }
     }
 
     if(this.events.results.end) {
+
+        // hide any parry
+        this.parry.text.alpha = 0;
+        this.parry.shield.alpha = 0;
+
+        this.parry.text.input.enabled = false;
+        this.parry.shield.input.enabled = false;
 
         // console.log('results end');
         this.events.results.end = false;
