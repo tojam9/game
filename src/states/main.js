@@ -11,6 +11,7 @@ var main = function() {};
 // Load images and sounds
 main.prototype.preload = function() {
 
+	this.game.load.audio('boden', ['./assets/audio/Battle_Music.mp3', './assets/audio/Battle_Music.ogg']);
     var R = 0;
     // layers object
     this.layers = {};
@@ -124,6 +125,8 @@ main.prototype.preload = function() {
 // Setup the example
 main.prototype.create = function() {
 
+    this.music = this.game.add.audio('boden');
+    this.music.play();
     var
     t_height,
     // resize castle foreground collision box height
