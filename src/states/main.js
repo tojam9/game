@@ -286,54 +286,54 @@ main.prototype.create = function() {
     // RPS result animations
     this.layers.popover.results = {};
 
-
     // blood spatter
-    // this.layers.popover.results.blood_spatter = this.game.add.sprite(
-    //     this.game.world.centerX - 426/6/2 *2,
-    //     this.game.world.centerY - 91/2 *2,
-    //     'results.blood_spatter', 0, this.layers.popover.group);
+    this.layers.popover.results.blood_spatter = this.game.add.sprite(
+        this.game.world.centerX - 426/6/2 *2,
+        this.game.world.centerY - 91/2 *2,
+        'results.blood_spatter', 0, this.layers.popover.group);
 
-    // this.layers.popover.group.add(this.layers.popover.results.blood_spatter);
+    this.layers.popover.group.add(this.layers.popover.results.blood_spatter);
 
-    // this.layers.popover.results.blood_spatter.animations.add('results.blood_spatter', [0, 1, 2, 3, 4, 5], 5, true);
-    // this.layers.popover.results.blood_spatter.animations.play('results.blood_spatter');
-
-    // this.layers.popover.results.blood_spatter.scale.setTo(2, 2);
+    this.layers.popover.results.blood_spatter.animations.add('results.blood_spatter', [0, 1, 2, 3, 4, 5], 5, true);
+    this.layers.popover.results.blood_spatter.animations.play('results.blood_spatter');
+    this.layers.popover.results.blood_spatter.scale.setTo(2, 2);
+    this.layers.popover.results.blood_spatter.alpha = 0;
 
 
     // sword slash
-    // this.layers.popover.results.Sword_Slash = this.game.add.sprite(
-    //     this.game.world.centerX - 523/4/2 *2,
-    //     this.game.world.centerY - 125/2 *2,
-    //     'results.Sword_Slash', 0, this.layers.popover.group);
+    this.layers.popover.results.swordslash = this.game.add.sprite(
+        this.game.world.centerX - 523/4/2,
+        this.game.world.centerY - 125/2,
+        'results.Sword_Slash', 0, this.layers.popover.group);
 
-    // this.layers.popover.results.Sword_Slash.animations.add('results.Sword_Slash', [0, 1, 2, 3], 5, true);
-    // this.layers.popover.results.Sword_Slash.animations.play('results.Sword_Slash');
+    this.layers.popover.results.swordslash.animations.add('results.Sword_Slash', [0, 1, 2, 3], 5, true);
+    this.layers.popover.results.swordslash.animations.play('results.Sword_Slash');
+    // this.layers.popover.results.swordslash.scale.setTo(2, 2);
+    this.layers.popover.results.swordslash.alpha = 0;
 
-    // this.layers.popover.results.Sword_Slash.scale.setTo(2, 2);
+    // block animation
+    this.layers.popover.results.block = this.game.add.sprite(
+        this.game.world.centerX - 328/3/2,
+        this.game.world.centerY - 91/2,
+        'results.Block_Animation', 0, this.layers.popover.group);
 
+    this.layers.popover.results.block.animations.add('results.Block_Animation', [0, 1, 2], 5, true);
+    this.layers.popover.results.block.animations.play('results.Block_Animation');
+    // this.layers.popover.results.block.scale.setTo(2, 2);
+    this.layers.popover.results.block.alpha = 0;
 
-    // // block animation
-    // this.layers.popover.results.Block_Animation = this.game.add.sprite(
-    //     this.game.world.centerX - 328/3/2 *2,
-    //     this.game.world.centerY - 91/2 *2,
-    //     'results.Block_Animation', 0, this.layers.popover.group);
+    // sword clash
+    this.layers.popover.results.swordclash = this.game.add.sprite(
+        this.game.world.centerX - 287/3/2,
+        this.game.world.centerY - 80/2,
+        'results.Sword_Clash', 0, this.layers.popover.group);
 
-    // this.layers.popover.results.Block_Animation.animations.add('results.Block_Animation', [0, 1, 2], 5, true);
-    // this.layers.popover.results.Block_Animation.animations.play('results.Block_Animation');
-
-    // this.layers.popover.results.Block_Animation.scale.setTo(2, 2);
-
-    // // sword clash
-    // this.layers.popover.results.Sword_Clash = this.game.add.sprite(
-    //     this.game.world.centerX - 287/3/2 *2,
-    //     this.game.world.centerY - 80/2 *2,
-    //     'results.Sword_Clash', 0, this.layers.popover.group);
-
-    // this.layers.popover.results.Sword_Clash.animations.add('results.Sword_Clash', [0, 1, 2], 5, true);
-    // this.layers.popover.results.Sword_Clash.animations.play('results.Sword_Clash');
-
+    this.layers.popover.results.swordclash.animations.add('results.Sword_Clash', [0, 1, 2], 5, true);
+    this.layers.popover.results.swordclash.animations.play('results.Sword_Clash');
     // this.layers.popover.results.Sword_Clash.scale.setTo(2, 2);
+    this.layers.popover.results.swordclash.alpha = 0;
+
+
 
 
 
@@ -570,6 +570,7 @@ main.prototype.update = function() {
             val.input.enabled = false;
         });
 
+        var anim_sprite = null;
 
         // process RPS
         if(this.rps.player.input === null || this.rps.player.type == null) {
@@ -577,16 +578,191 @@ main.prototype.update = function() {
             this.status.text.text = 'CHOOSE SOMETHING!';
 
         } else {
-            this.status.text.text = this.rps.player.input + ' ' + this.rps.player.type;
-            this.status.text.x = this.game.width / 2 - this.status.text.textWidth / 2;
-            this.status.text.y = this.game.height - this.status.text.textHeight - 50;
+
+            // null case
+            if (this.rps.player.input === this.rps.ai.input) {
+
+                if (this.rps.player.type === this.rps.ai.type) {
+
+                    if(this.rps.player.type === 'sword') {
+
+                        anim_sprite = this.layers.popover.results.swordclash;
+
+                        this.status.text.text = 'SWORDS CLASHED!';
+                    } else {
+                        // shield
+                        this.status.text.text = 'YOU BOTH BLOCKED!';
+
+                        anim_sprite = this.layers.popover.results.block;
+                    }
+
+                } else {
+
+                    // player sword vs AI shield
+                    if(this.rps.player.type === 'sword') {
+                        this.status.text.text = 'YOU GOT BLOCKED!';
+                    } else {
+                        this.status.text.text = 'YOU BLOCKED!';
+                    }
+
+                    anim_sprite = this.layers.popover.results.block;
+
+                }
+
+            } else {
+
+                // case: this.rps.player.input !== this.rps.ai.input
+
+                switch(this.rps.player.input) {
+                    case 'R':
+
+                        if(this.rps.ai.input == 'P') {
+
+                            if(this.rps.ai.type == 'sword') {
+                                // this.rps.player.type = 'sword' or 'shield'
+                                this.status.text.text = 'YOU DIED!';
+
+                                anim_sprite = this.layers.popover.results.blood_spatter;
+
+                            } else {
+
+                                // case: this.rps.ai.type == 'shield'
+
+                                if(this.rps.player.type == 'sword') {
+
+                                    this.status.text.text = 'YOU GOT BLOCKED!';
+
+                                } else {
+                                    // this.rps.player.type == 'shield'
+                                    this.status.text.text = 'YOU BOTH BLOCKED!';
+                                }
+
+                                anim_sprite = this.layers.popover.results.block;
+                            }
+
+                        } else {
+                            // this.rps.ai.input == 'S'
+                            // this.rps.ai.type == 'sword' or 'shield'
+
+                            if(this.rps.player.type == 'sword') {
+                                this.status.text.text = 'YOU WIN!';
+
+                                anim_sprite = this.layers.popover.results.swordslash;
+
+                            } else {
+                                // this.rps.player.type == 'shield'
+                                this.status.text.text = 'YOU BLOCKED!';
+
+                                anim_sprite = this.layers.popover.results.block;
+                            }
+                        }
+
+                        break;
+                    case 'P':
+
+                        if(this.rps.ai.input == 'S') {
+
+                            if(this.rps.ai.type == 'sword') {
+                                // this.rps.player.type = 'sword' or 'shield'
+                                this.status.text.text = 'YOU DIED!';
+
+                                anim_sprite = this.layers.popover.results.blood_spatter;
+
+                            } else {
+
+                                // case: this.rps.ai.type == 'shield'
+                                if(this.rps.player.type == 'sword') {
+
+                                    this.status.text.text = 'YOU GOT BLOCKED!';
+
+                                } else {
+                                    // this.rps.player.type == 'shield'
+                                    this.status.text.text = 'YOU BOTH BLOCKED!';
+                                }
+
+                                anim_sprite = this.layers.popover.results.block;
+                            }
+
+                        } else {
+                            // this.rps.ai.input == 'R'
+                            // this.rps.ai.type == 'sword' or 'shield'
+
+                            if(this.rps.player.type == 'sword') {
+                                this.status.text.text = 'YOU WIN!';
+
+                                anim_sprite = this.layers.popover.results.swordslash;
+
+                            } else {
+                                // this.rps.player.type == 'shield'
+                                this.status.text.text = 'YOU BLOCKED!';
+
+                                anim_sprite = this.layers.popover.results.block;
+                            }
+                        }
+
+                        break;
+                    case 'S':
+
+                        if(this.rps.ai.input == 'R') {
+
+                            if(this.rps.ai.type == 'sword') {
+                                // this.rps.player.type = 'sword' or 'shield'
+                                this.status.text.text = 'YOU DIED!';
+
+                                anim_sprite = this.layers.popover.results.blood_spatter;
+
+                            } else {
+
+                                // case: this.rps.ai.type == 'shield'
+                                if(this.rps.player.type == 'sword') {
+
+                                    this.status.text.text = 'YOU GOT BLOCKED!';
+
+                                } else {
+                                    // this.rps.player.type == 'shield'
+                                    this.status.text.text = 'YOU BOTH BLOCKED!';
+                                }
+
+                                anim_sprite = this.layers.popover.results.block;
+                            }
+
+                        } else {
+                            // this.rps.ai.input == 'P'
+                            // this.rps.ai.type == 'sword' or 'shield'
+
+                            if(this.rps.player.type == 'sword') {
+                                this.status.text.text = 'YOU WIN!';
+
+                                anim_sprite = this.layers.popover.results.swordslash;
+
+                            } else {
+                                // this.rps.player.type == 'shield'
+                                this.status.text.text = 'YOU BLOCKED!';
+
+                                anim_sprite = this.layers.popover.results.block;
+                            }
+                        }
+
+                        break;
+                    default:
+                        throw new Error('fucccck');
+                }
+
+            }
+
+
+            // this.status.text.text = this.rps.player.input + ' ' + this.rps.player.type;
         }
 
-
+        // show animation sprite
+        if(anim_sprite !== null) {
+            anim_sprite.alpha = 1;
+        }
 
         console.log('show results');
 
         console.log(this.rps.player.input, this.rps.player.type);
+        console.log(this.rps.ai.input, this.rps.ai.type);
 
         // align text
         this.status.text.updateTransform();
@@ -598,6 +774,10 @@ main.prototype.update = function() {
         this.rps.player.type = null;
 
         var showResults = function() {
+
+            if(anim_sprite !== null) {
+                anim_sprite.alpha = 0;
+            }
 
             this.events.results.end = true;
             console.log('finish showing results');
